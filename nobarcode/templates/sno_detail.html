@@ -1,0 +1,187 @@
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static%}
+
+
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+
+
+
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chi tiết Sno</h3>
+
+
+              <div class="form-group row">
+                <label for="orderDropdown" class="col-sm-4 col-form-label">Loại S</label>
+                <div class="col-sm-8">
+
+                    <label class="col-sm-16 col-form-label">{{ selected_order.get_type_s_display }}</label>
+                </div>
+
+            </div>
+
+
+            <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+              <div class="col-sm-8">
+                    <label class="col-sm-16 col-form-label">{{ selected_order.sno }}</label>
+              </div>
+            </div>
+          
+            <div class="form-group row">
+                <label for="orderDropdown" class="col-sm-4 col-form-label">Vật liệu</label>
+                <div class="col-sm-8">
+                      <label class="col-sm-16 col-form-label">{{ selected_order.materials }}</label>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="orderDropdown" class="col-sm-4 col-form-label">Quy cách 1 pcs</label>
+                <div class="col-sm-8">
+                      <label class="col-sm-16 col-form-label">{{ selected_order.specification }}</label>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="exampleFormControlSelect5" class="col-sm-10 col-form-label" style="width: 20px;">Thời gian gia công 1 pcs </label>
+              </div>
+
+              
+
+              <div class="table-responsive pt-0">
+                <table class="table table-bordered" id="custom-table">
+                    <thead>
+                        <tr>
+                            <th width="50%">Thứ tự</th>
+                            <th width="50%">Công đoạn</th>
+                            <th width="50%">Thời gian (phút)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for processing_time in processing_times %}
+                            <tr>
+                                <td>{{ processing_time.stt }}</td>
+                                <td>{{ processing_time.stage.process_name }}</td>
+                                <td>{{ processing_time.time_required }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="edit-button-container">
+                <a  href="{% url 'sno_detail_edit' instance %}" class="btn btn-primary">Chỉnh sửa</a>
+            </div>
+
+
+          <script>
+              document.addEventListener("DOMContentLoaded", function() {
+                  var orderDropdown = document.getElementById("orderDropdown");
+                  orderDropdown.selectedIndex = 0; 
+              });
+          
+              function changeOrder(dropdown) {
+                  var selectedOption = dropdown.options[dropdown.selectedIndex];
+                  var selectedOrderSno = selectedOption.value;  
+          
+
+                  var selectedOrderLabel = document.getElementById("selectedOrderLabel");
+                  selectedOrderLabel.textContent = selectedOrderSno;
+          
+                  window.location.href = "/sno/" + selectedOrderSno + "/";
+              }
+          </script>
+          
+        
+          
+            
+
+
+          </div>
+ 
+
+          
+          
+          </div>
+        </div>
+
+          <div class="col-md-7 grid-margin stretch-card">
+            {% if drawing %}
+                <iframe src="{% static drawing %}" width="100%" height="1120px" frameborder="0"></iframe>
+            {% endif %}
+        </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<style>
+    .edit-button-container {
+        padding-top: 20px; 
+    }
+</style>
+
+
+
+{% endblock %}
+{% if selected_order %}
+<div>
+    <h3>Order Details</h3>
+    <p>Sno: {{ selected_order.sno }}</p>
+    <p>Type S: {{ selected_order.get_type_s_display }}</p>
+    <p>Materials: {{ selected_order.materials }}</p>
+
+</div>
+{% endif %}
+
+<style>
+    #custom-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+  
+    #custom-table th,
+    #custom-table td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+    }
+  
+    #custom-table input {
+        width: 100px;
+        height: 30px;
+        margin-right: 10px;
+        border: 1px solid #ced4da;
+    }
+  
+    #custom-table button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+  
+    #custom-table button:hover {
+        background-color: #218838;
+    }
+  
+    #custom-table .remove-button {
+        background-color: #dc3545;
+    }
+  
+    #custom-table .remove-button:hover {
+        background-color: #c82333;
+    }
+  </style>

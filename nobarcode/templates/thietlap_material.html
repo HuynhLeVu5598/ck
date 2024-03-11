@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{%load static%}
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chọn thông số</h3>
+            
+            <!-- Form -->
+            <form id="myForm" method="post" action="{% url 'thietlap_detail' %}">
+              {% csrf_token %}
+
+              
+              <!-- Dropdown 2 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
+                <label class="col-sm-4 col-form-label">{{ so_yeu_cau }}</label>
+                <input type="hidden" name="so_yeu_cau" value="{{ so_yeu_cau }}">
+
+              </div>
+              
+              <div class="form-group row">
+                <label for="exampleFormControlInputRep" class="col-sm-4 col-form-label">Số rep</label>
+                <label class="col-sm-4 col-form-label">{{ so_rep }}</label>
+                <input type="hidden" name="so_rep" value="{{ so_rep }}">
+
+              </div>
+
+
+              <!-- Dropdown 3 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput3" class="col-sm-4 col-form-label">Số lượng</label>
+                <label class="col-sm-4 col-form-label">{{ so_luong }}</label>
+                <input type="hidden" name="so_luong" value="{{ so_luong }}">
+
+              </div>
+              
+
+              <!-- Radio Buttons -->
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
+                <label class="col-sm-4 col-form-label">{{ loai_s_chuan }}</label>
+                <input type="hidden" name="loai_s_chuan" value="{{ loai_s_chuan }}">
+
+              </div>
+              
+              <!-- Dropdown 1 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput1" class="col-sm-4 col-form-label">S no</label>
+                <label class="col-sm-4 col-form-label">{{ s_no }}</label>
+                <input type="hidden" name="selected_order_sno" value="{{ s_no }}">
+
+              </div>
+
+            <!-- Dropdown 4 -->
+            <!-- <div class="form-group row">
+              <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">Vật liệu</label>
+              <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">{{ materials|default:""}}</label>
+            </div> -->
+
+
+              
+            <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">Vật liệu</label>
+              <div class="col-sm-8">
+                  <select class="form-control" id="orderDropdown" onchange="changeOrder(this)" required>
+                      <option value="" disabled {% if not selected_order %}selected{% endif %}>Chọn vật liệu</option>
+                      {% for material in materials %}
+                          <option value="{{ material }}" {% if selected_order and material == selected_order.material %}selected{% endif %}>{{ material }}</option>
+                      {% endfor %}
+                  </select>
+                  <input type="hidden" name="selected_material" id="selectedMaterial" value="{{ selected_order.material }}">
+              </div>
+          </div>
+          
+          <script>
+              function changeOrder(selectElement) {
+                  var selectedValue = selectElement.value;
+                  document.getElementById("selectedMaterial").value = selectedValue;
+              }
+          </script>
+          
+
+              <!-- Nút Submit -->
+              <div class="form-group row">
+                <div class="col-sm-8">
+                    <button type="submit" class="btn btn-primary">Tiếp tục</button>
+                </div>
+            </div>
+          </form>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <script>
+  function submitForm() {
+      var soYeuCau = document.querySelector('[for="exampleFormControlInput2"]').textContent;
+      var soLuong = document.querySelector('[for="exampleFormControlInput3"]').textContent;
+      var sNo = document.querySelector('[for="exampleFormControlInput1"]').textContent;
+
+      // Optionally, you can use these values for further processing or submit them via AJAX
+      console.log("Số yêu cầu:", soYeuCau);
+      console.log("Số lượng:", soLuong);
+      console.log("S no:", sNo);
+
+      // Submit the form programmatically (if needed)
+      // document.getElementById("myForm").submit();
+  }
+</script> -->
+
+{% endblock %}

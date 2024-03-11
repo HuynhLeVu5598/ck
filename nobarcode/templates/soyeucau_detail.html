@@ -1,0 +1,501 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="main-panel">        
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-5 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Chọn thông số</h3>
+
+                        <!-- Dropdown 2 -->
+                        <div class="form-group row">
+                            <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
+                            {% if request_info.rep_number == 0 %}
+                                <label for="value_soyeucau" class="col-sm-4 col-form-label">{{ request_info.request_number }} </label>
+                            {% else %}
+                                <label for="value_soyeucau" class="col-sm-4 col-form-label">{{ request_info.request_number }} - {{ request_info.rep_number }}</label>
+                            {% endif %}
+                        </div>
+
+                        <!-- Dropdown 3 -->
+                        <div class="form-group row">
+                            <label for="exampleFormControlInput3" class="col-sm-4 col-form-label">Số lượng</label>
+                            <label for="value_soluong" class="col-sm-4 col-form-label">{{ request_info.quantity }}</label>
+                        </div>
+
+                        <!-- Radio Buttons -->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
+                            <label for="value_loaischuan" class="col-sm-4 col-form-label">{{ request_info.order.type_s }}</label>
+                        </div>
+
+                        <!-- Dropdown 1 -->
+                        <div class="form-group row">
+                            <label for="exampleFormControlInput1" class="col-sm-4 col-form-label">S no</label>
+                            <label for="value_sno" class="col-sm-4 col-form-label">{{ request_info.order.sno }}</label>
+                        </div>
+
+                        <!-- Dropdown 4 -->
+                        <div class="form-group row">
+                            <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">Vật liệu</label>
+                            <label for="value_vatlieu" class="col-sm-4 col-form-label">{{ request_info.order.materials}}</label>
+                        </div>
+
+                        <!-- Dropdown 5 -->
+                        <div class="form-group row">
+                            <label for="value_quycach1bit" class="col-sm-4 col-form-label" style="width: 120px;">Quy cách 1 pcs</label>
+                  
+                            <label for="value_quycach1bit" class="col-sm-4 col-form-label">{{ request_info.order.specification}}</label>
+             
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="exampleFormControlSelect5" class="col-sm-10 col-form-label" style="width: 20px;">Thời gian gia công </label>
+                          </div>
+            
+                          
+            
+
+
+
+<div class="table-responsive pt-0">
+    <table class="table table-bordered" id="custom-table">
+        <thead>
+            <tr>
+                <th width="5%">Stt</th>
+                <th width="10%">Ca</th>
+                <th width="5%">Số máy</th>
+                <th width="5%">Công đoạn</th>
+                <th width="35%">Hành động</th>
+                <th width="40%">Thời gian</th>
+
+            </tr>
+        </thead>
+
+
+
+        <tbody>
+            {% for processing_instance in processing_instances %}
+            <tr>
+                <td lấy theo stt>{{ processing_instance.stt }}</td>
+                
+                {% if list_ex %}
+                  
+                    {% for ex in list_ex %}
+
+                        {% if ex.employee_processing.stt == processing_instance.stt %}
+                            <td>{{ ex.shift }}</td>
+                            <td>{{ ex.num_machine }}</td>
+
+                            <!-- <td>
+
+                                <select id="customSelectok-{{ processing_instance.stt }}" class="custom-select custom-dropdown">
+                                    <option value="{{ ex.shift }}">{{ ex.shift }}</option>
+          
+                                    <option value="a">a</option>
+                                    <option value="b">b</option>
+                                    <option value="c">c</option>
+                                    <option value="d">d</option>
+                                    <option value="e">e</option>
+                                    <option value="f">f</option>
+                                </select>
+                            </td>
+                            
+                            <td>
+                                <input type="text" id="customInputok-{{ processing_instance.stt }}" class="custom-input" placeholder="Số máy" value="{{ ex.num_machine }}">
+                            </td> -->
+
+
+                        {% endif %}
+
+                    {% endfor %}
+                {% endif %}
+
+                {% if processing_instance.stage.process_name in st_remain %}
+                    <td>
+                        <select id="customSelect" class="custom-select custom-dropdown">
+                            <option value="a">A</option>
+                            <option value="b">B</option>
+                            <option value="c">C</option>
+                            <option value="d">D</option>
+                            <option value="e">E</option>
+                            <option value="f">F</option>
+                        </select>
+                    </td>
+                    
+                    
+                    <!-- <td>
+                        <input type="text" id="customInput" class="custom-input" placeholder="Số máy">
+                    </td> -->
+
+                    <td>
+                        <select id="customInput" class="custom-input">
+                            <option value=""></option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </td>
+                    
+                    
+                {% endif %}
+                
+
+                <td>{{ processing_instance.stage.process_name }}</td>
+                {% if processing_instance.stt == current_stt_value %}
+                    <td>
+                        <div class="time-column">
+                            <div class="d-flex flex-column" role="group">
+                                <button type="button" class="btn btn-inverse-success toggle-button batdau" data-status="{{ processing_instance.execution_status }}">Bắt đầu</button>
+                                <button type="button" class="btn btn-inverse-warning toggle-button toggle-button-warning ketthuc" data-status="{{ processing_instance.execution_status }}">Kết thúc</button>
+                                <button type="button" class="btn btn-inverse-danger toggle-button toggle-button-danger hoantat" data-status="{{ processing_instance.execution_status }}">Hoàn tất</button>
+                            </div>
+                        </div>
+                    </td>
+                {% elif processing_instance.stt < current_stt_value or current_stt_value == 0 %}
+                    <td>
+                        <div class="completed-message">
+                            Hoàn thành
+                        </div>
+                    </td>
+
+                {% else %}
+                    <td>
+                        
+                        <div class="text-muted"></div>
+                    </td>
+                {% endif %}
+                <td class="time"></td>
+
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+        
+        
+    </table>
+</div>
+
+
+
+<style>
+
+.custom-input {
+  width: 80px; 
+  height: 30px; 
+}
+
+.custom-dropdown {
+  width: 60px; 
+  border-radius: 5px; 
+}
+
+
+ 
+.d-flex button {
+    margin-bottom: 10px; 
+}
+.completed-message {
+
+    color: #d60c0c; 
+    padding: 5px 10px; 
+    border-radius: 5px; 
+    font-weight: bold; 
+}
+
+
+</style>
+
+
+
+<!-- Include jQuery library (if not already included) -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<style>
+    .btn-toggle-active {
+        background-color: #28a745 !important; /* Green color for active state */
+        color: #fff !important; /* White text color for active state */
+    }
+
+    .btn-toggle-active-warning {
+        background-color: #ffc107 !important; /* Yellow color for active state */
+        color: #000 !important; /* Black text color for active state */
+    }
+
+    .btn-toggle-active-danger {
+        background-color: #dc3545 !important; /* Red color for active state */
+        color: #fff !important; /* White text color for active state */
+    }
+</style>
+
+
+
+
+
+
+
+<script>
+
+// window.onbeforeunload = function() {
+//     return "Bạn có muốn load lại trang không?";
+// };
+
+var unloadPromptDisplayed = false;
+
+// Gán sự kiện onbeforeunload cho cửa sổ
+window.onbeforeunload = function(e) {
+    if (!unloadPromptDisplayed) {
+        var confirmationMessage = "Bạn có muốn load lại trang không?";
+        e.returnValue = confirmationMessage; // Thêm cho IE
+        return confirmationMessage;
+    }
+};
+
+$(document).ready(function () {
+    $(".hoantat").prop('disabled', true);
+    $(".ketthuc").prop('disabled', true);
+    {% if request_info.rep_number == 0 %}
+        var requestNumber = '{{ request_info.request_number|urlencode }}';
+    {% else %}
+        var requestNumber = '{{ request_info.request_number|urlencode }} - {{ request_info.rep_number|urlencode }} ';
+    {% endif %}
+
+    $(".batdau").click(function () {
+
+        var numMachineValue = $("#customInput").val();
+
+        if (numMachineValue.trim() === "") {
+            alert("Số máy không được để trống!");
+        } else {
+            var shouldStartTimer = confirm("Bạn có chắc muốn bắt đầu không?");
+            unloadPromptDisplayed = true;
+            if (shouldStartTimer) {
+                $(".hoantat").prop('disabled', true);
+                $(".batdau").prop('disabled', true);
+
+
+                var $row = $(this).closest("tr");
+                var $timeElement = $row.find(".time");
+
+                var startTime = new Date();
+                var startTimeString = startTime.toLocaleString(); // Sử dụng toLocaleString để hiển thị cả ngày và giờ
+                var startTimeStringshow = startTime.toLocaleTimeString(); // không hiển thị ngày
+
+
+                // Lưu giá trị startTime trong data
+                $row.data("startTime", startTime);
+
+                $timeElement.text("Bắt đầu: " + startTimeStringshow);
+
+                $(this).toggleClass("btn-toggle-active");
+                $(".ketthuc").removeClass("btn-toggle-active-warning");
+                $(".hoantat").removeClass("btn-toggle-active-danger");
+                $(".ketthuc").prop('disabled', false);
+
+                unloadPromptDisplayed = false;
+
+
+            }
+        }
+    });
+
+    $(".ketthuc").click(function () {
+        var shouldEndTimer = confirm("Bạn có chắc muốn kết thúc không?");
+    
+        if (shouldEndTimer) {
+            $(".ketthuc").prop('disabled', true);
+            $(this).toggleClass("btn-toggle-active-warning");
+            $(".batdau").removeClass("btn-toggle-active");
+            $(".hoantat").removeClass("btn-toggle-active-danger");
+
+            var $row = $(this).closest("tr");
+            var $timeElement = $row.find(".time");
+
+            // Lấy giá trị startTime từ data
+            var startTime = $row.data("startTime");
+
+            // Nếu đã bắt đầu thời gian
+            if (startTime) {
+
+
+                var selectCa = document.getElementById('customSelect').value;
+                var inputSoMay = document.getElementById('customInput').value;
+
+                var endTime = new Date();
+                // var startTimeString = startTime.toLocaleString(); // Sử dụng toLocaleString để hiển thị cả ngày và giờ
+                // var endTimeString = endTime.toLocaleString(); // Sử dụng toLocaleString để hiển thị cả ngày và giờ
+                // var endTimeStringshow = endTime.toLocaleTimeString();  // không hiển thị cả ngày 
+                var startTimeString = startTime.toISOString();  // Use ISO 8601 format
+                var endTimeString = endTime.toISOString();  // Use ISO 8601 format
+                var endTimeStringshow = endTime.toLocaleTimeString();  // Display time without date
+                // Tính toán thời gian giữa hai thời điểm
+                var timeDiff = endTime.getTime() - startTime.getTime();
+                var minutes = Math.floor(timeDiff / (1000 * 60));  // Chuyển đổi thời gian từ mili giây sang phút
+
+                $timeElement.html("Bắt đầu: " + startTime.toLocaleTimeString() + "<br><br>Kết thúc: " + endTimeStringshow + "<br><br>Thời gian: " + minutes + " phút");
+                
+                
+
+                // Get the CSRF token from the cookie
+                var csrftoken = getCookie('csrftoken');
+
+                $.ajax({
+                    url: '/soyeucau/' + requestNumber + '/',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    data: {
+                        'shift': selectCa,
+                        'num_machine': inputSoMay,
+                        'minutes': minutes,
+                        'time_start': startTimeString,
+                        'time_end': endTimeString,
+
+                    },
+                    success: function (data) {
+                        console.log("Server response:", data);
+                        if (data.success) {
+                            $(".hoantat").prop('disabled', false);
+                            $(".batdau").prop('disabled', false);
+
+
+                            // Thực hiện chuyển hướng
+                            // window.location.href = data.redirect_url;
+                        }
+                    },
+                    error: function (error) {
+                        // Xử lý lỗi (nếu có)
+                    }
+                });
+
+                // Function to get CSRF token from cookie
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = cookies[i].trim();
+                            // Check if the cookie name matches the desired name
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+
+
+            }
+
+
+
+
+
+
+        }
+    });
+
+    $(".hoantat").click(function () {
+
+        if (confirm("Bạn có chắc muốn hoàn tất không?")) {
+            unloadPromptDisplayed = true;
+
+            // Người dùng đã chọn "OK", thực hiện các thao tác cần thiết ở đây
+            $(this).toggleClass("btn-toggle-active-danger");
+            $(".batdau").removeClass("btn-toggle-active");
+            $(".ketthuc").removeClass("btn-toggle-active-warning");
+
+            // Get the CSRF token from the cookie
+            var csrftoken = getCookie('csrftoken');
+
+            $.ajax({
+                url: '/soyeucau/' + requestNumber + '/',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                data: {
+                    'hoantat': 1,
+
+                },
+                success: function (data) {
+                    console.log("Server response:", data);
+                    if (data.success) {
+                        window.location.reload();
+                    }
+                },
+                error: function (error) {
+                    // Xử lý lỗi (nếu có)
+                }
+            });
+
+            // Function to get CSRF token from cookie
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // Check if the cookie name matches the desired name
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }                
+
+
+
+        } else {
+            // Người dùng đã chọn "Cancel" hoặc đóng hộp thoại xác nhận
+            // Không thực hiện bất kỳ thao tác nào
+        }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+                        
+
+
+
+
+
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7 grid-margin stretch-card">
+
+                <iframe src="{{ request_info.drawing }}" width="100%" height="1120px" frameborder="0"></iframe>
+    
+              </div>
+              
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

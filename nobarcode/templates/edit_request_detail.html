@@ -1,0 +1,155 @@
+<!-- request_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="container">
+    <h1 class="my-4">Chi tiết số yêu cầu</h1>
+
+    <style>
+
+        .custom-div {
+            width: 200px;   
+        }
+
+        table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+  
+
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+
+
+    </style>
+
+    <table class="table table-bordered">
+        <tbody>
+            <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                {% csrf_token %}
+
+                <tr>
+                    <th scope="row">Số yêu cầu</th>
+                    <td><input type="text" id="requestNumberInput" name="request_number" value="{{ request_info.request_number }}" ></td>
+                </tr>
+                <tr>
+                    <th scope="row">Số rep</th>
+                    <td><input type="text" id="repNumberInput" name="rep_number" value="{{ request_info.rep_number }}" ></td>
+                </tr>
+       
+
+                <tr>
+                    <th scope="row">Số lượng</th>
+                    <td><input type="text" name="quantity" value="{{ request_info.quantity }}" ></td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Sno</th>
+                    {% if request_info.order.type_s == 'Không làm S chuẩn' %}
+                        <!-- <td><input type="text" name="sNo" value="{{ request_info.order.sno }}_{{request_info.request_number}}" ></td> -->
+
+                        <td><a href="{% url 'sno_detail_edit' instance %}">{{ request_info.order.sno }}</a></td>
+                    {% else %}
+                        <td><a href="{% url 'sno_detail_edit' request_info.order.sno %}">{{ request_info.order.sno }}</a></td>
+                    {% endif %}
+                     
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    </td>
+                </tr>
+            </form>
+
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    function validateForm() {
+        var requestNumberInput = document.getElementById('requestNumberInput');
+        var repNumberInput = document.getElementById('repNumberInput');
+        var soYeuCauValue = requestNumberInput.value.trim();
+
+        if (soYeuCauValue.charAt(0).toUpperCase() === 'L') {
+            if (parseInt(repNumberInput.value) === 0) {
+                alert('Số rep không được là 0 khi số yêu cầu bắt đầu bằng L');
+                return false; 
+            }
+        } else if (!isNaN(soYeuCauValue.charAt(0))) {
+            if (parseInt(repNumberInput.value) !== 0) {
+                alert('Số rep phải là 0 khi số yêu cầu bắt đầu bằng số');
+                return false; 
+            }
+        }
+
+        return true;
+    }
+</script>
+{% endblock %}
+
+
+            <!-- <tr>
+                <th scope="row">Sno</th>
+                <td><input type="text" value="{{ request_info.order.sno }}" readonly></td>
+            </tr>
+            <tr>
+                <th scope="row">Loại S</th>
+                <td><input type="text" value="{{ request_info.order.type_s }}" readonly></td>
+            </tr>
+            <tr>
+                <th scope="row">Vật liệu</th>
+                <td><input type="text" value="{{ materials }}" readonly></td>
+            </tr>
+            <tr>
+                <th scope="row">Quy cách 1 pcs</th>
+                <td><input type="text" value="{{ specification }}" readonly></td>
+            </tr>
+
+            <tr>
+                <th scope="row">Thời gian gia công 1 pcs</th>
+                <td>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Thứ tự công đoạn</th>
+                                <th scope="col">Công đoạn</th>
+                                <th scope="col">Thời gian gia công (phút)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for processing_time in request_info.order.sno.processing_times.all %}
+                                <tr>
+                                    <td><input type="text" value="{{ processing_time.stt }}" readonly></td>
+                                    <td><input type="text" value="{{ processing_time.stage.process_name }}" readonly></td>
+                                    <td><input type="text" value="{{ processing_time.time_required }}" readonly></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </td>
+            </tr>               
+            <tr>
+                <th scope="row">Bản vẽ</th>
+
+                <td >
+                    <iframe src="{{ request_info.order.drawing }}" width="100%" height="1120px" frameborder="0"></iframe>
+                </td>
+            </tr> -->
+                

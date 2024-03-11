@@ -1,0 +1,15 @@
+<!-- templates/clear_order.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear ProcessingTime</title>
+</head>
+<body>
+    <h2>Clear ProcessingTime</h2>
+    <form method="post" action="{% url 'clear_processingtime' %}">  <!-- Sửa đường dẫn tới view -->
+        {% csrf_token %}
+        <button type="submit">Clear ProcessingTime</button>
+    </form>
+
+</body>
+</html>

@@ -1,0 +1,538 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{%load static%}
+{% csrf_token %}
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+
+        <div class="row col-md-12">
+          <div class="col-md-5 grid-margin stretch-card">
+            <div class="card">
+              <div class="card-body">
+                <h3>Chọn thông số</h3>
+
+                  <!-- Dropdown 2 -->
+
+
+                  <div class="form-group row">
+                    <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
+                    <label id="soYeuCauLabel" class="col-sm-4 col-form-label">{{ so_yeu_cau }}</label>
+                    <input type="hidden" name="so_yeu_cau" value="{{ so_yeu_cau }}">
+                </div>
+
+                <!-- Dropdown 3 -->
+                <div class="form-group row">
+                  <label for="exampleFormControlInput3" class="col-sm-4 col-form-label">Số lượng</label>
+                  <label id="soLuongLabel" class="col-sm-4 col-form-label">{{ so_luong }}</label>
+                  <input type="hidden" name="so_luong" value="{{ so_luong }}">
+                </div>
+
+
+                <div class="form-group row">
+                  <label for="exampleFormControlInputRep" class="col-sm-4 col-form-label">Số rep</label>
+                  <label id="soRepLabel" class="col-sm-4 col-form-label">{{ so_rep }}</label>
+                  <input type="hidden" name="so_rep" value="{{ so_rep }}">
+                </div>
+
+                <!-- Radio Buttons -->
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
+                  <label id="loaiSChuanLabel" class="col-sm-4 col-form-label">{{ loai_s_chuan }}</label>
+                  <input type="hidden" name="loai_s_chuan" value="{{ loai_s_chuan }}">
+                </div>
+
+                <!-- Dropdown 1 -->
+                <div class="form-group row">
+                  <label for="exampleFormControlInput1" class="col-sm-4 col-form-label">S no</label>
+                  <label id="sNoLabel" class="col-sm-4 col-form-label">{{ s_no }}</label>
+                  <input type="hidden" name="selected_order_sno" value="{{ s_no }}">
+                </div>
+
+
+
+                <div class="form-group row grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="table-responsive pt-0">
+                        <table class="table table-bordered" id="custom-table2">
+                          <thead>
+                            <tr>
+                              <th style="width: 40%;">Vật liệu</th>
+                              <th style="width: 60%;">Quy cách 1 pcs</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          </tbody>
+                        </table>
+                        <button type="button" onclick="addTableRow2()" class="btn btn-success btn-sm">+</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+
+
+
+
+                <div class="form-group row">
+                  <label for="exampleFormControlSelect5" class="col-sm-10 col-form-label" style="width: 20px;">Thời gian gia công 1 pcs </label>
+                </div>
+
+                <div class="form-group row grid-margin stretch-card">
+
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="table-responsive pt-0">
+                              <table class="table table-bordered" id="custom-table">
+                                  <thead>
+                                      <tr>
+                                        <th style="width: 5%;">Stt</th>
+                                        <th style="width: 45%;">Công đoạn</th>
+                                        <th style="width: 40%;">Thời gian(phút)</th>
+                                        <th style="width: 10%;"></th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                  </tbody>
+                              </table>
+                              <button type="button" onclick="addTableRow()" class="btn btn-success btn-sm">+</button>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+              
+
+
+
+
+
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-md-7 grid-margin stretch-card">
+            {% if pdf_path %}
+              <iframe src="{{ pdf_path }}" width="100%" height="1120px" frameborder="0"></iframe>
+            {% endif %}
+            <input type="text" name="pdf_path" value="{{ pdf_path }}" hidden>
+              
+          </div>
+
+          <div class="col-md-12 grid-margin stretch-card">
+            <div class="form-group row">
+              <div class="col-sm-8 offset-sm-4">
+                <button onclick="collectTableData()" type="button" class="btn btn-primary">Lưu</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
+
+
+<script>
+
+var csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+function collectTableData() {
+    var soYeuCauLabelElement = document.getElementById('soYeuCauLabel');
+    var soYeuCauValue = soYeuCauLabelElement.textContent || soYeuCauLabelElement.innerText;
+
+    var soLuongLabelElement = document.getElementById('soLuongLabel');
+    var soLuongValue = soLuongLabelElement.textContent || soLuongLabelElement.innerText;
+
+    var soRepLabelElement = document.getElementById('soRepLabel');
+    var soRepValue = soRepLabelElement.textContent || soRepLabelElement.innerText;
+
+    var loaiSChuanLabelElement = document.getElementById('loaiSChuanLabel');
+    var loaiSChuanValue = loaiSChuanLabelElement.textContent || loaiSChuanLabelElement.innerText;
+
+    var sNoLabelElement = document.getElementById('sNoLabel');
+    var sNoValue = sNoLabelElement.textContent || sNoLabelElement.innerText;
+
+
+    // var selectedMaterialValue = document.getElementById('selectedMaterial').value;
+
+
+    // var quyCachSelectElement = document.getElementById('quyCachSelectElement');
+    // var selectedQuyCachValue = quyCachSelectElement.options[quyCachSelectElement.selectedIndex].text;
+
+    // var quyCachInputValueElement = document.getElementById('quyCachInput');
+    // var quyCachInputValue = quyCachInputValueElement.value;
+
+    // var combinedQuyCachValue = selectedQuyCachValue + quyCachInputValue;
+
+    var pdfPathInput = document.querySelector('input[name="pdf_path"]');
+    var pdfPathValue = pdfPathInput.value;
+
+    var tableData = [];
+
+
+    tableData.push({
+        'soYeuCau': soYeuCauValue,
+        'soLuong': soLuongValue,
+        'soRep': soRepValue,
+        'loaiSChuan': loaiSChuanValue,
+        'sNo': sNoValue,
+        // 'selectedMaterial': selectedMaterialValue,
+        // 'combinedQuyCach': combinedQuyCachValue,
+        'pdf_path':pdfPathValue
+    });
+
+    var tableBody = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+    var rows = tableBody.getElementsByTagName('tr');
+    rows_cd = rows.length
+    for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0) {
+            var rowData = {};
+            rowData['stt'] = cells[0].innerText;
+
+            var inputElement = cells[1].getElementsByTagName('input')[0];
+            rowData['congdoan_name'] = inputElement.value;
+            if (!rowData['congdoan_name']){
+              alert('Chưa nhập công đoạn')
+              return 0
+            }
+            rowData['thoigian'] = cells[2].getElementsByTagName('input')[0].value;
+            if (!rowData['thoigian']){
+              alert('Chưa nhập thời gian')
+              return 0
+            }
+            tableData.push(rowData);
+        }
+    }
+
+
+    var tableBody2 = document.getElementById("custom-table2").getElementsByTagName('tbody')[0];
+    var rows = tableBody2.getElementsByTagName('tr');
+    rows_vl = rows.length
+    for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0) {
+            var rowData = {};
+
+            var inputElement = cells[0].getElementsByTagName('input')[0];
+            rowData['vatlieu'] = inputElement.value;
+            if (!rowData['vatlieu']){
+              alert('Chưa nhập vật liệu')
+              return 0
+            }
+            var selectElement = cells[1].getElementsByTagName('select')[0];
+            var inputElement2 = cells[1].getElementsByTagName('input')[0];
+            var inputElement3 = cells[1].getElementsByTagName('input')[1];
+            var inputElement4 = cells[1].getElementsByTagName('input')[2];
+          
+
+            if (!selectElement.options[selectElement.selectedIndex].text || !inputElement2.value || !inputElement3.value || !inputElement4.value){
+              alert('Chưa nhập quy cách')
+              return 0
+            }
+            rowData['quycach'] = selectElement.options[selectElement.selectedIndex].text + inputElement2.value;
+            rowData['v1'] = selectElement.options[selectElement.selectedIndex].text + inputElement3.value;
+            rowData['v2'] = selectElement.options[selectElement.selectedIndex].text + inputElement4.value;
+
+
+            tableData.push(rowData);
+        }
+    }
+
+
+    if (rows_vl==0) {
+      alert('Chưa nhập vật liệu và quy cách 1 pcs')
+    }
+    else if (rows_cd == 0) {
+      alert('Chưa nhập công đoạn và thời gian')
+    }
+    else {
+      $.ajax({
+          type: "POST",
+          url: "{% url 'post_order' %}",
+          data: {
+              'csrfmiddlewaretoken': csrfToken, 
+              'tableData': tableData
+          },
+          success: function (response) {
+              console.log("Server response:", response);
+              if (response.success) {
+     
+                  window.location.href = response.redirect_url;
+              }
+          },
+          error: function (error) {
+              console.error("Error:", error);
+          }
+      });
+
+    }
+
+  }
+
+
+function addTableRow2() {
+    var table = document.getElementById("custom-table2").getElementsByTagName('tbody')[0];
+    var newRow = table.insertRow(table.rows.length);
+
+    // Cell 1
+    var cell1 = newRow.insertCell(0);
+
+    cell1.innerHTML = `
+        <input list="orderDropdown2" class="form-control custom-input" id="orderInput2" name="orderInput2" onchange="changeOrder(this)" autocomplete="off">
+        <datalist id="orderDropdown2" class="custom-datalist">
+            <option value="" disabled>Chọn vật liệu</option>
+            {% for material in materials %}
+                <option>{{ material }}</option>
+            {% endfor %}
+        </datalist>
+    `;
+
+    $(document).ready(function () {
+      $(document).on('input', '#orderInput2', function () {
+          var inputValue = $(this).val().toUpperCase();
+          $(this).val(inputValue);
+      });
+  });
+
+
+
+    var customInput = cell1.querySelector('.custom-input');
+    var customDatalist = cell1.querySelector('.custom-datalist');
+
+
+    var cell2 = newRow.insertCell(1);
+    cell2.innerHTML = `
+
+          <div class="input-group" style="width: 100%;">
+            <select id="select_quycach" class="custom-select" style="width: 30%;">
+              <option selected></option>
+              <option value="1">Ø</option>
+              <option value="2">T</option>
+            </select>
+            <input id='input_quycach' type="text" class="form-control" style="height: 38px; width: 70%;">
+
+            <h3 class="form-control" style="height: 38px; width: 30%;">V1</h3>
+            <input id='input_v1' type="text" class="form-control" style="height: 38px; width: 70%;">
+
+            <h3 class="form-control" style="height: 38px; width: 30%;">V2</h3>
+            <input id='input_v2' type="text" class="form-control form-v2" style="height: 38px; width: 70%;">
+
+
+          </div>
+
+    `;
+
+
+
+    // Cell 3 (Action)
+    var cell3 = newRow.insertCell(2);
+    var removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.innerText = "-";
+    removeButton.className = "btn btn-danger btn-sm remove-button";
+
+    removeButton.onclick = function() { removeTableRow(this); };
+    cell3.appendChild(removeButton);
+}
+
+
+
+
+  // var rowCounter = 1;
+  function addTableRow() {
+      var table = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+      var newRow = table.insertRow(table.rows.length);
+
+      // Cell 1
+      var rows = table.getElementsByTagName('tr');
+      rowCounter = rows.length;
+      var cell1 = newRow.insertCell(0);
+      cell1.innerHTML = rowCounter++;
+
+      // Cell 2
+      var cell2 = newRow.insertCell(1);
+
+      cell2.innerHTML = `
+
+            <input list="orderDropdown1" class="form-control custom-input" id="orderInput1" name="orderInput1" onchange="changeOrder(this)" autocomplete="off">
+            <datalist id="orderDropdown1" class="custom-datalist">
+                <option value="" disabled>Chọn công đoạn</option>
+                {% for processing_stage in processing_stages %}
+                    <option>{{ processing_stage.process_name }}</option>
+                {% endfor %}
+            </datalist>
+
+      `;
+
+
+      var customInput = document.querySelector('.custom-input');
+      var customDatalist = document.querySelector('.custom-datalist');
+
+
+      customInput.style.width = '100%';  
+      customInput.style.padding = '8px';  
+      customDatalist.style.maxHeight = '200px';  
+
+      // Cell 3
+      var cell3 = newRow.insertCell(2);
+      cell3.innerHTML = '<input type="number" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, \'\');" />';
+
+      // Cell 4 (Action)
+      var cell4 = newRow.insertCell(3);
+      var removeButton = document.createElement("button");
+      removeButton.type = "button";
+      removeButton.innerText = "-";
+      removeButton.className = "btn btn-danger btn-sm remove-button";
+
+
+      removeButton.onclick = function() { removeTableRow(this); };
+      cell4.appendChild(removeButton);
+  }
+
+  
+  function removeTableRow(button) {
+    var row = button.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+
+
+    var tableBody = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+    var rows = tableBody.getElementsByTagName('tr');
+
+    for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0) {
+            cells[0].innerHTML = i + 1;
+        }
+    }
+  }
+
+
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+$(document).ready(function () {
+
+    $(document).on('keydown', 'input.form-v2', function (e) {
+
+        if (e.which === 13) {
+            e.preventDefault();
+
+            addTableRow2();
+            var newRow = $(this).closest('tr').next();
+            var orderInput = newRow.find('#orderInput2');
+
+            if (orderInput.length > 0) {
+                orderInput.focus();
+            }
+
+        }
+    });
+});
+
+
+$(document).ready(function () {
+
+    $(document).on('keydown', '#orderInput1', function (e) {
+ 
+        if (e.which === 13) {
+            e.preventDefault();
+
+            var currentCell = $(this).closest('td');
+            var nextCell = currentCell.next();
+            while (nextCell.length > 0 && nextCell.find('input').length === 0) {
+                nextCell = nextCell.next();
+            }
+
+            if (nextCell.length > 0) {
+                nextCell.find('input').focus();
+            }
+        }
+    });
+});
+
+$(document).ready(function () {
+
+    $(document).on('keydown', 'input[type="number"]', function (e) {
+
+        if (e.which === 13) {
+            e.preventDefault();
+            addTableRow();
+            var newRow = $(this).closest('tr').next();
+            var orderInput = newRow.find('#orderInput1');
+
+            if (orderInput.length > 0) {
+                orderInput.focus();
+            }
+
+        }
+
+
+    });
+});
+
+$(document).on('keydown', '#orderInput2', function (e) {
+    if (e.which === 13) {
+        e.preventDefault();
+
+        var currentCell = $(this).closest('td');
+        var nextSelect = currentCell.next().find('select');
+
+        if (nextSelect.length > 0) {
+            nextSelect.focus();
+        }
+    }
+});
+
+
+$(document).on('keydown', '#select_quycach', function (e) {
+    if (e.which === 13) {
+        e.preventDefault();
+
+        var currentCell = $(this).closest('.input-group');
+        var nextInput = currentCell.find('#input_quycach');
+
+        if (nextInput.length > 0) {
+            nextInput.focus();
+        }
+    }
+});
+
+$(document).on('keydown', '#input_quycach', function (e) {
+    if (e.which === 13) {
+        e.preventDefault();
+
+        var currentCell = $(this).closest('.input-group');
+        var nextInput = currentCell.find('#input_v1');
+
+        if (nextInput.length > 0) {
+            nextInput.focus();
+        }
+    }
+});
+
+$(document).on('keydown', '#input_v1', function (e) {
+    if (e.which === 13) {
+        e.preventDefault();
+
+        var currentCell = $(this).closest('.input-group');
+        var nextInput = currentCell.find('#input_v2');
+
+        if (nextInput.length > 0) {
+            nextInput.focus();
+        }
+    }
+});
+
+
+</script>
+
+{% endblock %}

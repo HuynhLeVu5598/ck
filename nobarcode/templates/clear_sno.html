@@ -1,0 +1,15 @@
+<!-- templates/clear_order.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Sno</title>
+</head>
+<body>
+    <h2>Clear Sno</h2>
+    <form method="post" action="{% url 'clear_sno' %}">  <!-- Sửa đường dẫn tới view -->
+        {% csrf_token %}
+        <button type="submit">Clear Sno</button>
+    </form>
+
+</body>
+</html>

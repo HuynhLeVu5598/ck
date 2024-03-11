@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h2>Chi tiết đơn hàng #{{ order.id }}</h2>
+    <p>Số yêu cầu: {{ order.request_number }}</p>
+    <!-- Thêm thông tin khác về đơn hàng nếu cần -->
+
+    <!-- Hiển thị vật liệu của đơn hàng -->
+    <h3>Vật liệu</h3>
+    <p>{{ order.order_material.material.name }}</p>
+
+    <h3>Số lượng</h3>
+    <p>{{ order.quantity }}</p>
+
+    <h3>Loại S chuẩn</h3>
+    <p>{{ order.type_s }}</p>
+
+    <!-- Hiển thị các công đoạn và thời gian gia công -->
+    <h3>Thông tin gia công</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Công đoạn</th>
+          <th>Thời gian gia công (phút)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for processing_time in order.processing_times.all %}
+          <tr>
+            <td>{{ processing_time.stage.process_name }}</td>
+            <td>{{ processing_time.time_required }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

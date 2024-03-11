@@ -1,0 +1,175 @@
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+
+
+      <!-- Cột chứa các dropdown -->
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chi tiết Sno</h3>
+
+
+              <div class="form-group row">
+                <label for="orderDropdown" class="col-sm-4 col-form-label">Loại S</label>
+                <div class="col-sm-8">
+
+                    <label class="col-sm-16 col-form-label">{{type_s}}</label>
+                </div>
+
+            </div>
+
+
+            <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+              <div class="col-sm-8">
+                    <label id="snoLabel" class="col-sm-16 col-form-label">{{ sno_instance.sno }}</label>
+              </div>
+            </div>
+          
+            <!-- <div class="form-group row">
+                <label for="orderDropdown" class="col-sm-4 col-form-label">Vật liệu</label>
+                <div class="col-sm-8">
+                    <select id="orderDropdown" name="materials" class="form-control">
+                        {% for material in materials %}
+                            <option value="{{ material.id }}">{{ material }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div> -->
+            
+
+
+              
+            <!-- <div class="form-group row">
+                <label for="orderDropdown" class="col-sm-4 col-form-label">Vật liệu</label>
+                <div class="col-sm-8">
+                    <select id="orderDropdown" name="materials" class="form-control" onchange="changeMaterial(this)">
+                        <option value="" disabled selected>Chọn Vật liệu</option>
+                        {% for material in materials %}
+                            <option value="{{ material.id }}">{{ material }}</option>
+                        {% endfor %}
+                    </select>
+
+                    
+                </div>
+            </div>
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var materialDropdown = document.getElementById("orderDropdown");
+            
+                    materialDropdown.addEventListener("change", function() {
+                        var selectedOption = materialDropdown.options[materialDropdown.selectedIndex];
+                        var selectedMaterial = selectedOption.value;
+    
+                        alert(selectedMaterial, typeof(selectedMaterial)) // không có j hết
+            
+                        // Redirect to the selected material URL
+                        window.location.href = "/sno/" + selectedMaterial;
+                    });
+                });
+            </script>
+
+
+          </div> -->
+ 
+
+          <div class="form-group row">
+            <label for="orderDropdown" class="col-sm-4 col-form-label">Vật liệu</label>
+            <div class="col-sm-8">
+                <select id="orderDropdown" name="materials" class="form-control" onchange="changeMaterial(this)">
+                    <option value="" disabled selected>Chọn Vật liệu</option>
+                    {% for material in materials %}
+                        <option value="{{ material.id }}">{{ material }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <!-- Hiển thị giá trị đã chọn -->
+        <div id="selectedValueDisplay" style="display: none;"></div>
+        
+        <script>
+            function changeMaterial(selectElement) {
+                var selectedValue = selectElement.options[selectElement.selectedIndex].text;
+                var sno = document.getElementById('snoLabel').innerText;
+                var newURL = "/sno/" + sno + "/" + selectedValue + "/";
+                window.location.href = newURL;
+
+            }
+        </script>
+        
+     
+          
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+{% endblock %}
+{% if selected_order %}
+<div>
+    <h3>Order Details</h3>
+    <p>Sno: {{ selected_order.sno }}</p>
+    <p>Type S: {{ selected_order.get_type_s_display }}</p>
+    <p>Materials: {{ selected_order.materials }}</p>
+
+</div>
+{% endif %}
+
+<style>
+    #custom-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+  
+    #custom-table th,
+    #custom-table td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+    }
+  
+    #custom-table input {
+        width: 100px;
+        height: 30px;
+        margin-right: 10px;
+        border: 1px solid #ced4da;
+    }
+  
+    #custom-table button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+  
+    #custom-table button:hover {
+        background-color: #218838;
+    }
+  
+    #custom-table .remove-button {
+        background-color: #dc3545;
+    }
+  
+    #custom-table .remove-button:hover {
+        background-color: #c82333;
+    }
+  </style>

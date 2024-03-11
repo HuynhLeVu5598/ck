@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{%load static%}
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chọn thông số</h3>
+
+              <!-- Dropdown 2 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
+                <label class="col-sm-4 col-form-label">{{ so_yeu_cau }}</label>
+                <input type="hidden" name="so_yeu_cau" value="{{ so_yeu_cau }}">
+              </div>
+              
+              <!-- Dropdown 3 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput3" class="col-sm-4 col-form-label">Số lượng</label>
+                <label class="col-sm-4 col-form-label">{{ so_luong }}</label>
+                <input type="hidden" name="so_luong" value="{{ so_luong }}">
+              </div>
+              
+
+              <div class="form-group row">
+                <label for="exampleFormControlInputRep" class="col-sm-4 col-form-label">Số rep</label>
+                <label for="value_rep"class="col-sm-4 col-form-label">{{ so_rep }}</label>
+                <input type="hidden" name="so_rep" value="{{ so_rep }}">
+              </div>
+
+
+              <!-- Radio Buttons -->
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
+                <label class="col-sm-4 col-form-label">{{ loai_s_chuan }}</label>
+                <input type="hidden" name="loai_s_chuan" value="{{ loai_s_chuan }}">
+
+              </div>
+              
+              <!-- Dropdown 1 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput1" class="col-sm-4 col-form-label">S no</label>
+                <label class="col-sm-4 col-form-label">{{ s_no }}</label>
+                <input type="hidden" name="selected_order_sno" value="{{ s_no }}">
+
+              </div>
+
+          
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-7 grid-margin stretch-card">
+        {% if pdf_path %}
+          <iframe src="{{ pdf_path }}" width="100%" height="1120px" frameborder="0"></iframe>
+        {% else %}
+          
+          <form method="post" enctype="multipart/form-data" action="{% url 'thietlap_detail' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+              <input type="hidden" name="so_yeu_cau" value="{{ so_yeu_cau }}">
+              <input type="hidden" name="so_luong" value="{{ so_luong }}">
+              <input type="hidden" name="so_rep" value="{{ so_rep }}">
+              <input type="hidden" name="loai_s_chuan" value="{{ loai_s_chuan }}">
+              <input type="hidden" name="selected_order_sno" value="{{ s_no }}">
+              <input type="hidden" name="have_input_pdf" value="have_input_pdf">
+
+              <h3 for="pdfFile">Chọn tệp PDF:</h3>
+              <!-- <input type="file" name="pdfFile" accept=".pdf" class="form-control-file"> -->
+              <input type="file" name="pdfFile" accept=".pdf" class="form-control-file" id="pdfFileInput">
+            </div>
+            <button type="submit" class="btn btn-primary">Tiếp tục</button>
+
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+            <!-- <script>
+                $(document).ready(function () {
+                    // $('#pdfFileInput').on('keydown', function (e) {
+                        if (e.which === 13) {
+                            e.preventDefault(); 
+                            $('form button[type="submit"]').click(); 
+                        }
+                    // });
+                });
+            </script> -->
+            
+            <script>
+              $(document).ready(function () {
+                  $(document).on('keydown', function (e) {
+                      if (e.which === 13) {
+                          e.preventDefault();
+                          $('form button[type="submit"]').click();
+                      }
+                  });
+              });
+          </script>
+
+          </form>
+        {% endif %}
+      </div>
+      
+
+
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+
+    var pdfFileInput = document.getElementById('pdfFileInput');
+    if (!pdfFileInput.value) {
+
+      pdfFileInput.value = 'đường dẫn tệp PDF mặc định';
+    }
+  });
+</script>
+
+
+<script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
+
+
+<script>
+  $(document).ready(function() {
+    // Xử lý sự kiện khi nút "Xem" được nhấn
+    $('#view-button').on('click', function() {
+      // Lấy dữ liệu từ form
+      var formData = new FormData($('#pdf-form')[0]);
+
+      // Gửi yêu cầu AJAX
+      $.ajax({
+        type: 'POST',
+        url: $('#pdf-form').attr('action'),
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          // Cập nhật nội dung của #pdf-container
+          $('#pdf-container').html(response);
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      });
+    });
+  });
+</script>
+
+
+
+<script>
+  // var rowCounter = 1;
+  function addTableRow() {
+      var table = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+      var newRow = table.insertRow(table.rows.length);
+
+      // Cell 1
+      var rows = table.getElementsByTagName('tr');
+      rowCounter = rows.length;
+      var cell1 = newRow.insertCell(0);
+      cell1.innerHTML = rowCounter++;
+
+      // Cell 2
+      var cell2 = newRow.insertCell(1);
+      cell2.innerHTML = '<select class="form-control">{% for material in materials %}<option value="{{ material.id }}">{{ material.name }}</option>{% endfor %}</select>';
+
+      // Cell 3
+      var cell3 = newRow.insertCell(2);
+      cell3.innerHTML = '<input type="number" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, \'\');" />';
+
+      // Cell 4 (Action)
+      var cell4 = newRow.insertCell(3);
+      var removeButton = document.createElement("button");
+      removeButton.type = "button";
+      removeButton.innerText = "-";
+      removeButton.className = "btn btn-danger btn-sm remove-button";
+      removeButton.onclick = function() { removeTableRow(this); };
+      cell4.appendChild(removeButton);
+  }
+
+  function removeTableRow(button) {
+    var row = button.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+
+    // Update row numbers after removing a row
+    var tableBody = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+    var rows = tableBody.getElementsByTagName('tr');
+
+    for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0) {
+            cells[0].innerHTML = i + 1;
+        }
+    }
+}
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{%load static%}
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chọn thông số</h3>
+            
+            <!-- Form -->
+            <form id="myForm" method="post" action="{% url 'thietlap_detail' %}">
+              {% csrf_token %}
+
+              
+              <!-- Dropdown 2 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
+                <label for="value_soyeucau"class="col-sm-4 col-form-label">{{ so_yeu_cau }}</label>
+                <input type="hidden" name="so_yeu_cau" value="{{ so_yeu_cau }}">
+              </div>
+     
+              <div class="form-group row">
+                <label for="exampleFormControlInputRep" class="col-sm-4 col-form-label">Số rep</label>
+                <label for="value_rep"class="col-sm-4 col-form-label">{{ so_rep }}</label>
+                <input type="hidden" name="so_rep" value="{{ so_rep }}">
+              </div>
+
+              <!-- Dropdown 3 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput3" class="col-sm-4 col-form-label">Số lượng</label>
+                <label for="value_soluong" class="col-sm-4 col-form-label">{{ so_luong }}</label>
+                <input type="hidden" name="so_luong" value="{{ so_luong }}">
+
+              </div>
+              
+
+              <!-- Radio Buttons -->
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
+                <label for="value_loaischuan" class="col-sm-4 col-form-label">{{ loai_s_chuan }}</label>
+                <input type="hidden" name="loai_s_chuan" value="{{ loai_s_chuan }}">
+
+              </div>
+              
+              <!-- Dropdown 1 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput1" class="col-sm-4 col-form-label">S no</label>
+                <label for="value_sno" class="col-sm-4 col-form-label">{{ s_no }}</label>
+                <input type="hidden" name="selected_order_sno" value="{{ s_no }}">
+
+              </div>
+
+            <!-- Dropdown 4 -->
+            <div class="form-group row">
+              <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">Vật liệu</label>
+              <label for="value_vatlieu" class="col-sm-4 col-form-label">{{ materials|default:""}}</label>
+              <input type="hidden" name="selected_material" value="{{ materials }}">
+            
+            </div>
+
+          
+
+
+            <!-- Dropdown 5 -->
+            <div class="form-group row">
+              <label for="value_quycach1bit" class="col-sm-4 col-form-label" style="width: 120px;">Quy cách 1 pcs</label>
+              <label class="col-sm-4 col-form-label" style="width: 120px;">{{ specification|default:'' }}</label>
+
+              <div class="col-sm-4">
+                  <input type="hidden" type="text" class="form-control" id="value_quycach1bit" name="selected_specification" value="{{ specification|default:'' }}">
+              </div>
+          </div>
+          
+
+            <div class="form-group row">
+              <label for="exampleFormControlSelect5" class="col-sm-10 col-form-label" style="width: 500px;">Thời gian gia công 1 pcs</label>
+            </div>
+
+            <div class="col-lg-20 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div class="table-responsive pt-0">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Stt</th>
+                          <th>Công đoạn</th>
+                          <th>Thời gian</th>
+                        </tr>
+                        
+                      </thead>
+                      <tbody>
+                        {% for processing_time in processing_times  %}
+                          <!-- <tr>
+                            <td>{{ processing_time.stt  }}</td>
+                            <td>{{ processing_time.stage.process_name|default:"N/A" }}</td>
+                            <td>{{ processing_time.time_required|default:"N/A" }}</td>
+                          </tr> -->
+                          <tr>
+                            <td data-stt="{{ processing_time.stt }}">{{ processing_time.stt }}</td>
+                            <td data-process-name="{{ processing_time.stage.process_name|default:'N/A' }}">{{ processing_time.stage.process_name|default:'N/A' }}</td>
+                            <td data-time-required="{{ processing_time.time_required|default:'N/A' }}">{{ processing_time.time_required|default:'N/A' }}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>              
+
+            <div class="form-group row">
+              <div class="col-sm-8">
+                  <button type="submit" class="btn btn-primary">Lưu</button>
+                  <!-- <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button> -->
+
+              </div>
+          </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-7 grid-margin stretch-card">
+        <iframe src="{% static drawing %}" width="100%" height="1120px" frameborder="0"></iframe>
+     </div>
+
+    </div>
+  </div>
+</div>
+{%comment%}
+<!-- <script>
+  function submitForm() {
+      var soYeuCau = document.querySelector('[for="value_soyeucau"]').textContent;
+      var soLuong = document.querySelector('[for="value_soluong"]').textContent;
+      var loaiSChuan = document.querySelector('[for="value_loaischuan"]').textContent;
+      var sNo = document.querySelector('[for="value_sno"]').textContent;
+      var vatLieu = document.querySelector('[for="value_vatlieu"]').textContent;
+
+  }
+</script> -->
+
+<!-- <script>
+  function submitForm() {
+      var soYeuCau = document.querySelector('[for="value_soyeucau"]').textContent;
+      var soLuong = document.querySelector('[for="value_soluong"]').textContent;
+      var loaiSChuan = document.querySelector('[for="value_loaischuan"]').textContent;
+      var sNo = document.querySelector('[for="value_sno"]').textContent;
+      var vatLieu = document.querySelector('[for="value_vatlieu"]').textContent;
+
+      // AJAX request to send data to the server
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "{% url 'save_request_info' %}", true);
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+      // Prepare the data to be sent in JSON format
+      var requestData = {
+          soYeuCau: soYeuCau,
+          soLuong: soLuong,
+          loaiSChuan: loaiSChuan,
+          sNo: sNo,
+          vatLieu: vatLieu
+      };
+
+      // Set up the callback function to handle the response
+      xhr.onload = function () {
+          if (xhr.status === 200) {
+              var response = JSON.parse(xhr.responseText);
+
+              if (response.success) {
+                  // Redirect to the success page
+                  window.location.href = "{% url 'save_request_info' %}";
+              } else {
+                  // Handle error
+                  console.error("Save operation failed:", response.error);
+              }
+          } else {
+              // Handle non-200 HTTP status
+              console.error("HTTP error:", xhr.status);
+          }
+      };
+
+      // Send the data
+      xhr.send(JSON.stringify(requestData));
+
+      // Optionally, handle the response or perform other actions after sending the data
+  }
+</script> -->
+{%endcomment%}
+
+
+
+
+
+{% endblock %}

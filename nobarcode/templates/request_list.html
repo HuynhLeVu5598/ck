@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .request-list li {
+            margin-bottom: 10px;
+            padding: 8px;
+            /* background-color: #007bff; */
+            color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 8px;
+            width: 200px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Danh sách số yêu cầu</h2>
+
+        <div class="form-group">
+            <div class="input-group">
+                <!-- <div class="input-group-prepend">
+                    <span class="input-group-text" id="search-addon">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div> -->
+                <input type="text" id="search" class="form-control search-input" placeholder="Nhập số yêu cầu">
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <ul class="list-group request-list">
+            {% for request_info in request_infos %}
+                <li class="list-group-item">
+                    <!-- <a href="{% url 'request_detail' request_info.id %}">{{ request_info.request_number }} - {{ request_info.quantity }}</a> -->
+                    {% if request_info.rep_number == 0 %}
+                        <a href="{% url 'request_detail' request_info.id %}">{{ request_info.request_number }}</a>
+                    {% else %}
+                        <a href="{% url 'request_detail' request_info.id %}">{{ request_info.request_number }} - {{ request_info.rep_number }}</a>
+                    {% endif %}
+                
+                
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var searchInput = document.getElementById("search");
+            var requestListItems = document.querySelectorAll(".request-list li");
+            var requestList = Array.from(requestListItems);
+
+            searchInput.addEventListener("input", function() {
+                var searchTerm = searchInput.value.trim().toLowerCase();
+
+                requestList.forEach(function(requestItem) {
+                    var textContent = requestItem.innerText.trim().toLowerCase();
+                    var isVisible = textContent.includes(searchTerm);
+                    requestItem.style.display = isVisible ? "block" : "none";
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

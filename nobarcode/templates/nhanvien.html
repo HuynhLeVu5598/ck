@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{%load static%}
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+
+
+
+      <!-- Cột chứa các dropdown -->
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chọn thông số</h3>
+
+            <!-- Dropdown 1 -->
+            <div class="form-group row">
+              <label for="exampleFormControlInput1" class="col-sm-4 col-form-label">S no</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control form-control-lg" id="exampleFormControlInput1" placeholder="Nhập S no">
+              </div>
+            </div>
+            
+
+            <!-- Dropdown 2 -->
+            <div class="form-group row">
+              <label for="exampleFormControlSelect2" class="col-sm-4 col-form-label">Số yêu cầu</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control form-control-lg" id="exampleFormControlInput2" placeholder="Nhập số yêu cầu">
+
+              </div>
+            </div>
+
+            <!-- Dropdown 3 -->
+            <div class="form-group row">
+              <label for="exampleFormControlSelect3" class="col-sm-4 col-form-label">Số lượng</label>
+              <div class="col-sm-8">
+                <input type="number" class="form-control" id="exampleFormControlInput3" placeholder="Nhập số lượng" name="quantity" min="0">
+              </div>
+            </div>
+            
+          
+            
+            
+            
+          
+            <!-- Radio Buttons -->
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
+              <div class="col-sm-8">
+                <div class="form-check form-check-inline mr-3">
+                  <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                    Có S chuẩn 
+                  </label>
+                </div>
+                <div class="form-check form-check-inline mr-3">
+                  <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
+                    Sẽ làm S chuẩn
+                  </label>
+                </div>
+                <div class="form-check form-check-inline mr-3">
+                  <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
+                    Không làm S chuẩn
+                  </label>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+            <!-- Dropdown 4 -->
+            <div class="form-group row">
+              <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">Vật liệu</label>
+              <div class="col-sm-8">
+                <select class="form-control form-control-sm" id="exampleFormControlSelect4">
+                    {% for material in materials %}
+                        <option value="{{ material.id }}">{{ material.name }}</option>
+                    {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <!-- Dropdown 5 -->
+            <div class="form-group row">
+              <label for="exampleFormControlSelect5" class="col-sm-4 col-form-label" style="width: 120px;">Quy cách 1 pcs </label>
+              <div class="col-sm-8">
+                <div class="input-group" style="width: 100%;">
+                  <select class="custom-select" id="exampleFormControlSelect5">
+                    <option selected>...</option>
+                    <option value="1">Ø</option>
+                    <option value="2">T</option>
+                  </select>
+                  <input type="text" class="form-control" aria-label="Text input with dropdown button" style="height: 38px;width: 180px;">
+                </div>
+              </div>
+            </div>
+            
+
+
+            <div class="form-group row">
+              <label for="exampleFormControlSelect5" class="col-sm-10 col-form-label" style="width: 20px;">Thời gian gia công 1 pcs </label>
+            </div>
+
+            <!-- <div class="col-lg-20 grid-margin stretch-card"> -->
+            <div class="form-group row grid-margin stretch-card">
+
+              <div class="card">
+                  <div class="card-body">
+                      <div class="table-responsive pt-0">
+                          <table class="table table-bordered" id="custom-table">
+                              <thead>
+                                  <tr>
+                                    <th style="width: 10%;">Stt</th>
+                                    <th style="width: 40%;">Công đoạn</th>
+                                    <th style="width: 40%;">Thời gian(phút)</th>
+                                    <th style="width: 10%;"></th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                              </tbody>
+                          </table>
+                          <button type="button" onclick="addTableRow()" class="btn btn-success btn-sm">+</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-7 grid-margin stretch-card">
+        {% if pdf_path %}
+          <iframe src="{{ pdf_path }}" width="100%" height="1120px" frameborder="0"></iframe>
+        {% else %}
+          
+          <form method="post" enctype="multipart/form-data" action="{% url 'nhanvien' %}">
+            {% csrf_token %}
+            <div class="form-group">
+
+              <h3 for="pdfFile">Chọn tệp PDF:</h3>
+              <input type="file" name="pdfFile" accept=".pdf" class="form-control-file">
+            </div>
+            <button type="submit" class="btn btn-primary">Xem</button>
+          </form>
+        {% endif %}
+      </div>
+      
+
+      
+      <!-- Nút Submit -->
+      <div class="form-group row">
+        <div class="col-sm-8 offset-sm-4">
+          <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
+
+<script>
+  $(document).ready(function() {
+    // Xử lý sự kiện khi nút "Xem" được nhấn
+    $('#view-button').on('click', function() {
+      // Lấy dữ liệu từ form
+      var formData = new FormData($('#pdf-form')[0]);
+
+      // Gửi yêu cầu AJAX
+      $.ajax({
+        type: 'POST',
+        url: $('#pdf-form').attr('action'),
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          // Cập nhật nội dung của #pdf-container
+          $('#pdf-container').html(response);
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      });
+    });
+  });
+</script>
+
+
+<script>
+  function submitForm() {
+    var sNo = $('#exampleFormControlInput1').val();
+    var soYeuCau = $('#exampleFormControlInput2').val();
+    var soLuong = $('#exampleFormControlSelect3').val();
+    var loaiSChuan = $("input[name='optionsRadios']:checked").val();
+    var vatLieu = $('#exampleFormControlSelect4').val();
+    var quyCach1Bit = $('#exampleFormControlSelect5').val();
+    // Lấy giá trị từ bảng
+    var tableData = [];
+    $('#custom-table tbody tr').each(function() {
+        // Get the selected material name from the dropdown
+        var selectedMaterialName = $(this).find('td:eq(0) select option:selected').text();
+
+        var thoiGian = $(this).find('td:eq(1) input').val();
+
+        // Add the selected material name and thoiGian to the tableData array
+        tableData.push({ 'congDoan': selectedMaterialName, 'thoiGian': thoiGian });
+    });
+
+    // Check if tableData is not empty before sending
+    if (tableData.length > 0) {
+        // Gửi dữ liệu đến máy chủ bằng AJAX
+        $.ajax({
+            type: 'POST',
+            url: '{% url "post_order" %}', // Thay 'your_submit_url' bằng đường dẫn đến view xử lý yêu cầu
+            data: {
+                'sNo': sNo,
+                'soYeuCau': soYeuCau,
+                'soLuong': soLuong,
+                'loaiSChuan': loaiSChuan,
+                'vatLieu': vatLieu,
+                'quyCach1Bit': quyCach1Bit,
+                'tableData': JSON.stringify(tableData), // Chuyển đổi mảng thành chuỗi JSON
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                // Xử lý phản hồi từ máy chủ nếu cần
+                console.log(response);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    } else {
+        console.log('Table data is empty. Not sending the request.');
+    }
+}
+</script>
+
+
+
+<script>
+  // var rowCounter = 1;
+  function addTableRow() {
+      var table = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+      var newRow = table.insertRow(table.rows.length);
+
+      // Cell 1
+      var rows = table.getElementsByTagName('tr');
+      rowCounter = rows.length;
+      var cell1 = newRow.insertCell(0);
+      cell1.innerHTML = rowCounter++;
+
+      // Cell 2
+      var cell2 = newRow.insertCell(1);
+      cell2.innerHTML = '<select class="form-control">{% for material in materials %}<option value="{{ material.id }}">{{ material.name }}</option>{% endfor %}</select>';
+
+      // Cell 3
+      var cell3 = newRow.insertCell(2);
+      cell3.innerHTML = '<input type="number" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, \'\');" />';
+
+      // Cell 4 (Action)
+      var cell4 = newRow.insertCell(3);
+      var removeButton = document.createElement("button");
+      removeButton.type = "button";
+      removeButton.innerText = "-";
+      removeButton.className = "btn btn-danger btn-sm remove-button";
+      removeButton.onclick = function() { removeTableRow(this); };
+      cell4.appendChild(removeButton);
+  }
+
+  function removeTableRow(button) {
+    var row = button.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+
+    // Update row numbers after removing a row
+    var tableBody = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+    var rows = tableBody.getElementsByTagName('tr');
+
+    for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0) {
+            cells[0].innerHTML = i + 1;
+        }
+    }
+}
+
+
+
+  // function removeTableRow(button) {
+  //     var row = button.parentNode.parentNode;
+  //     row.parentNode.removeChild(row);
+  // }
+</script>
+
+
+{% endblock %}

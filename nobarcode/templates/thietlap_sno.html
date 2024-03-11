@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{%load static%}
+<script>
+  document.addEventListener("keydown", function(event) {
+    // Ngăn chặn Enter làm nút submit
+    if (event.key === "Enter") {
+        event.preventDefault();
+    }
+});
+</script>
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chọn thông số</h3>
+
+            <!-- Form -->
+            <form id="myForm" method="post" action="{% url 'thietlap_detail' %}">
+              {% csrf_token %}
+   
+              <!-- Dropdown 2 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
+                <label class="col-sm-4 col-form-label" >{{ so_yeu_cau }}</label>
+                <input type="hidden" name="so_yeu_cau" value="{{ so_yeu_cau }}">
+
+              </div>
+              
+              <div class="form-group row">
+                <label for="exampleFormControlInputRep" class="col-sm-4 col-form-label">Số rep</label>
+                <label class="col-sm-4 col-form-label" >{{ so_rep }}</label>
+                <input type="hidden" name="so_rep" value="{{ so_rep }}">
+
+              </div>
+
+              <!-- Dropdown 3 -->
+              <div class="form-group row">
+                <label for="exampleFormControlInput3" class="col-sm-4 col-form-label">Số lượng</label>
+                <label class="col-sm-4 col-form-label">{{ so_luong }}</label>
+                <input type="hidden" name="so_luong" value="{{ so_luong }}">
+              </div>
+
+
+              <!-- Radio Buttons -->
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
+                <label class="col-sm-4 col-form-label">{{ loai_s_chuan }}</label>
+                <input type="hidden" name="loai_s_chuan" value="{{ loai_s_chuan }}">
+
+              </div>
+              
+              <!-- <div class="form-group row">
+                <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="orderDropdown" onchange="changeOrder(this)" required>
+                        <option value="" disabled {% if not selected_order %}selected{% endif %}>Chọn S no</option>
+                        {% for sno in all_sno %}
+                            <option value="{{ sno }}" {% if order == selected_order %}selected{% endif %} >{{ sno }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="hidden" name="selected_order_sno" id="selectedOrderSno" value="{{ selected_order.sno }}">
+
+
+                </div>
+            </div>-->
+
+
+
+          
+          <!-- <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+              <div class="col-sm-8">
+                  <input list="orderDropdown" class="form-control" id="orderInput" name="orderInput" oninput="changeOrder(this)" autocomplete="off" required>
+                  <datalist id="orderDropdown">
+                      <option value="" disabled {% if not selected_order %}selected{% endif %}>Chọn S no</option>
+                      {% for sno in all_sno %}
+                          <option value="{{ sno }}" {% if order == selected_order %}selected{% endif %}>{{ sno }}</option>
+                      {% endfor %}
+                  </datalist>
+                  <input type="hidden" name="selected_order_sno" id="selectedOrderSno" value="{{ selected_order.sno }}">
+                  <p id="errorText" style="color: red; display: none;">Giá trị không hợp lệ. Vui lòng chọn từ danh sách.</p>
+              </div>
+          </div> -->
+          
+
+          {% if loai_s_chuan == "Có S chuẩn" %}
+
+            <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+              <div class="col-sm-8">
+  
+                      <input list="orderDropdown" class="form-control" id="orderInput" name="orderInput" oninput="changeOrder(this)" autocomplete="off" required>
+                      <datalist id="orderDropdown">
+                          <option value="" disabled {% if not selected_order %}selected{% endif %} >Chọn S no</option>
+                          {% for sno in all_sno %}
+                              <option value="{{ sno }}" {% if order == selected_order %}selected{% endif %} autocomplete="off">{{ sno }}</option>
+                          {% endfor %}
+                      </datalist>
+
+                  <input type="hidden" name="selected_order_sno" id="selectedOrderSno" value="{{ selected_order.sno }}">
+                  <p id="errorText" style="color: red; display: none;">Giá trị không hợp lệ. Vui lòng chọn từ danh sách.</p>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-8">
+                  <button type="submit" class="btn btn-primary" id="submitButton" style="display: none;">Tiếp tục</button>
+              </div>
+            </div>
+
+
+
+          {% else %}
+            <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+              <div class="col-sm-8">
+                  <input type="text" class="form-control" id="orderInput1" name="selected_order_sno" autocomplete="off" required>
+              </div>
+          </div>
+          
+          <script>
+              document.getElementById("orderInput1").addEventListener("input", function() {
+                  this.value = this.value.toUpperCase();
+              });
+          </script>
+          
+          <div class="form-group row">
+              <div class="col-sm-8">
+                  <button type="submit" class="btn btn-primary" id="submitButton1">Tiếp tục</button>
+              </div>
+          </div>
+          <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+          <script>
+
+              $(document).ready(function () {
+                  $('#orderInput1').on('keydown', function (e) {
+                      if (e.which === 13) {
+                          e.preventDefault();
+                          $('#submitButton1').click();
+                      }
+                  });
+              });
+
+          </script>
+
+
+          {% endif %}
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var allSno = {{ all_sno|safe }};  
+                var orderInput = document.getElementById('orderInput1');
+                var submitButton = document.getElementById('submitButton1');
+        
+                submitButton.addEventListener('click', function (event) {
+                    var enteredValue = orderInput.value.trim();
+        
+                    if (allSno.includes(enteredValue)) {
+                        alert('Giá trị Sno này đã được sử dụng. Vui lòng nhập giá trị Sno khác');
+                        event.preventDefault();  // Prevent form submission
+                    }
+                });
+            });
+        </script>
+
+
+          <script>
+            function changeOrder(input) {
+                var selectedOrderSno = document.getElementById('selectedOrderSno');
+                var errorText = document.getElementById('errorText');
+                var orderDropdown = document.getElementById('orderDropdown');
+            
+                var enteredValue = input.value;
+                var validValues = Array.from(orderDropdown.options).map(option => option.value);
+            
+                if (validValues.includes(enteredValue)) {
+                    selectedOrderSno.value = enteredValue;
+                    errorText.style.display = 'none';
+                    document.getElementById("submitButton").style.display = 'block';
+                } else {
+                    errorText.style.display = 'block';
+                    document.getElementById("submitButton").style.display = 'none';  // Ẩn nút khi giá trị không hợp lệ
+                }
+            }
+          </script>
+          
+
+
+          
+            
+
+            <!-- <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+              <div class="col-sm-8">
+                  <input list="orderDropdown" class="form-control" id="orderInput" name="orderInput" onchange="changeOrder(this)">
+                  <datalist id="orderDropdown" >
+                      <option value="" disabled {% if not selected_order %}selected{% endif %}>Chọn S no</option>
+                      {% for sno in all_sno %}
+                          <option value="{{ sno }}" {% if order == selected_order %}selected{% endif %}>{{ sno }}</option>
+                      {% endfor %}
+                  </datalist>
+                  <input type="hidden" name="selected_order_sno" id="selectedOrderSno" value="{{ selected_order.sno }}" >
+          
+              </div>
+          </div> -->
+            
+
+
+
+
+            <!-- <script>
+              function changeOrder(selectElement) {
+              var selectedValue = selectElement.value;
+              document.getElementById("selectedOrderSno").value = selectedValue;
+            }
+
+            </script> -->
+
+
+              <!-- Nút Submit -->
+
+            
+ 
+            
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

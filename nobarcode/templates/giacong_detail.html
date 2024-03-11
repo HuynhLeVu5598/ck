@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-top: 20px; text-align: center;">
+    {% if  request_info.rep_number == 0 %}
+        <h2>Số yêu cầu {{ request_info.request_number }}</h2>
+    {% else %}
+        <h2>Số yêu cầu {{ request_info.request_number }} - {{ request_info.rep_number }} </h2>
+    {% endif %}
+
+    <table class="table" style="width: 80%; margin: auto;">
+        <thead>
+            <tr>
+                <th>Công đoạn</th>
+                <th>MSNV</th>
+                <th>Ca</th>
+                <th>Số máy</th>
+                <th>Thời gian bắt đầu</th>
+                <th>Thời gian kết thúc</th>
+                <th>Thời gian (phút)</th>
+                <th>Tổng thời gian (phút)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in employee_processing_list %}
+                {% for execution_time in entry.execution_times %}
+                    <tr>
+                        {% if forloop.first %}
+                            <td rowspan="{{ entry.execution_times.count }}" class="stage-cell">{{ execution_time.employee_processing.stage }}</td>
+                        {% endif %}
+                        <td>{{ execution_time.user.username }}</td>
+                        <td>{{ execution_time.shift }}</td>
+                        <td>{{ execution_time.num_machine }}</td>
+                        <td>{{ execution_time.time_start|date:"H:i:s d/m/Y" }}</td>
+                        <td>{{ execution_time.time_end|date:"H:i:s d/m/Y" }}</td>
+                        <td>{{ execution_time.duration }}</td>
+                        {% if forloop.first %}
+                            <td rowspan="{{ entry.execution_times.count }}" class="total-time-cell">{{ execution_time.employee_processing.execution_time }}</td>
+                        {% endif %}
+
+ 
+
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+  
+            {% for employee_processing_unuse in employee_processing_unused %}
+                <tr>
+                    <td>{{ employee_processing_unuse.stage }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td colspan="7">Total</td>
+                <td class="total-cell"></td>
+
+            </tr>
+        </tbody>
+        
+
+
+    </table>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lấy tất cả các phần tử có class là "total-time-cell"
+        var totalCells = document.getElementsByClassName("total-time-cell");
+    
+        // Khởi tạo biến để lưu tổng giá trị
+        var total = 0;
+    
+        // Lặp qua từng phần tử và cộng giá trị vào biến total
+        for (var i = 0; i < totalCells.length; i++) {
+            total += parseFloat(totalCells[i].textContent);
+        }
+
+        // Hiển thị tổng vào ô có class là "total-cell"
+        var totalCell = document.querySelector(".total-cell");
+        totalCell.textContent = total;
+
+    });
+    </script>
+
+
+
+
+
+
+
+
+
+
+<style>
+    table {
+        border-collapse: collapse;
+        margin-top: 20px;
+        width: 80%;
+        margin: auto;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center; /* Center the text within the cells */
+    }
+
+    th {
+        background-color: #f2f2f2; /* Add background color to header cells */
+    }
+
+    .stage-cell, .total-time-cell {
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,318 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form id="myForm" method="post" action="{% url 'save_kiemtratuchu' %}"></form>
+    {% csrf_token %}
+
+    <div id="tableContainer">
+        <div style="margin-left: 50px;">
+            <h2 style="margin-top: 20px; text-align: center;">Biểu kiểm tra tự chủ các công đoạn</h2>
+            <h3 style="margin-top: 20px; display: inline-block;">Số yêu cầu </h3>
+            <!-- <h3 class= 'req' style="display: inline-block;">{{ request_info }}</h3> -->
+
+            {% if  request_info.rep_number == 0 %}
+                <h3 class= 'req' style="display: inline-block;">{{ request_info.request_number }}</h3>
+            {% else %}
+                <h3 class= 'req' style="display: inline-block;">{{ request_info.request_number }} - {{ request_info.rep_number }}</h3>
+            {% endif %}
+
+
+            <table id="dataTable" class="table" style="width: 100%; margin: auto;">
+                
+                <tr>
+                    <td class="stage-cell">Công đoạn</td>
+            
+                    {% for employee_processing in employee_processing_list %}
+                        <td class="stage-cell">{{ employee_processing.stage }}</td>
+                    {% endfor %}
+            
+                    <input type="hidden" class="form-control" name="len_ep" value="{{ employee_processing_list|length }}">
+                </tr>
+
+                <tr>
+                    <td class="stage-cell">MSNV</td>
+                    {% for user in users_list %}
+                        <td class="stage-cell">{{ user }}</td>
+                    {% endfor %}
+                </tr>
+            
+                <tr>
+                    <td class="stage-cell" rowspan="3">Số thứ tự KT</td>
+                    {% for _ in employee_processing_list %}
+                        <td class="stage-cell">Max</td>
+                    {% endfor %}
+                </tr>
+            
+                <tr>
+                    {% for _ in employee_processing_list %}
+                        <td class="stage-cell">Min</td>
+                    {% endfor %}
+                </tr>
+            
+                <tr>
+                    {% for _ in employee_processing_list %}
+                        <td class="stage-cell">OK/NG</td>
+                    {% endfor %}
+                </tr>
+            
+                {% if stages_tuchu %}
+                    {% for inspect, values_dict in inspects_dict.items %}
+
+                        <tr>
+
+                            <td rowspan="4">
+                                <button type="button" onclick="removeThreeRows(this)" class="btn btn-danger btn-sm">-</button>
+
+                                <input type="text" name="input_0" value="{{inspect}}" style="width: 120px;">
+    
+                            </td>
+                            {% for max_value in values_dict.max_values %}
+
+                                <td hidden="true">
+                                    
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for max_value in values_dict.max_values %}
+
+                                <td>
+                                    <input type="number" name="input_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
+                                           placeholder="Max" style="width: 100px;" value="{% if max_value %}{{ max_value }}{% endif %}">
+                                </td>
+
+                            {% endfor %}
+
+
+                        </tr>
+            
+                        <tr>
+                            {% for min_value in values_dict.min_values %}
+                                <td>
+                                    <input type="number" name="input_2_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
+                                           placeholder="Min" style="width: 90px;" value="{% if min_value %}{{ min_value }}{% endif %}">
+                                </td>
+                            {% endfor %}
+                        </tr>
+            
+                        <tr>
+                            {% for okng_value in values_dict.okngs %}
+                                <td>
+                                    <select name="input_3_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}">
+                                        <option value="OK" {% if okng_value == 'OK' %}selected{% endif %}>OK</option>
+                                        <option value="NG" {% if okng_value == 'NG' %}selected{% endif %}>NG</option>
+                                    </select>
+                                </td>
+                            {% endfor %}
+
+                        </tr>
+
+                    {% endfor %}
+                {% endif %}
+            </table>
+
+
+
+            <button type="button" onclick="addThreeRows()" class="btn btn-success btn-sm">+</button>
+        </div>
+        <div style="margin-top: 20px; margin-left: 40px; ">
+            <button class="btn btn-primary" onclick="saveValues()">Lưu</button>
+
+        </div>
+    </div>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    let tableContainer = document.getElementById("tableContainer");
+
+    tableContainer.style.overflowX = 'auto';
+    let counter = 1; 
+
+    var lenEp = document.querySelector('input[name="len_ep"]');
+    var valueLenEp = lenEp.value;
+
+    function removeThreeRows(button) {
+        let table = document.getElementById("dataTable");
+        let rowCount = table.rows.length;
+
+        let parentRow = button.closest('tr');
+
+        let rowIndex = parentRow.rowIndex;
+
+        for (let i = 0; i < 4; i++) {
+            if (rowIndex + i < rowCount) {
+                table.deleteRow(rowIndex + i);
+                rowIndex --;
+            }
+        }
+    }
+
+    function addThreeRows() {
+        let table = document.getElementById("dataTable");
+        let valueLenEp = parseInt(document.getElementsByName("len_ep")[0].value);
+
+        for (let i = 0; i < 4; i++) {
+            let newRow = table.insertRow(table.rows.length);
+
+            if (i === 0) {
+                let cell1 = newRow.insertCell(0);
+                cell1.rowSpan = 4;
+
+            
+                let inputElement = document.createElement('input');
+                inputElement.type = 'text';
+                inputElement.name = 'input_0';
+                inputElement.style.width = '120px'; 
+
+                cell1.appendChild(inputElement);
+            } else {
+                for (let j = 0; j < valueLenEp; j++) {
+                    let newCell = newRow.insertCell(j);
+                    let inputElement;
+
+                    if (i === 1 || i === 2) {
+                        inputElement = document.createElement('input');
+                        inputElement.type = 'number';
+                        inputElement.name = 'input_' + i + '_' + j;
+                        inputElement.placeholder = i === 1 ? 'Max' : 'Min';
+                    } else if (i === 3) {
+                        inputElement = document.createElement('select');
+                        inputElement.name = 'input_' + i + '_' + j;
+
+                        let optionOK = document.createElement('option');
+                        optionOK.value = 'OK';
+                        optionOK.text = 'OK';
+                        inputElement.appendChild(optionOK);
+
+                        let optionNG = document.createElement('option');
+                        optionNG.value = 'NG';
+                        optionNG.text = 'NG';
+                        inputElement.appendChild(optionNG);
+                    }
+
+                    inputElement.style.width = '90px'; 
+
+                    newCell.appendChild(inputElement);
+                }
+            }
+        }
+
+        document.getElementById("tableContainer").style.overflowX = 'auto';
+    }
+
+    function saveValues() {
+        let savedValues = [];
+
+        let table = document.getElementById("dataTable");
+
+        let soYeuCauRowValues = [];
+        let soYeuCauElement = document.querySelector('h3.req');
+        if (soYeuCauElement) {
+            soYeuCauRowValues.push("Số yêu cầu");
+            soYeuCauRowValues.push(soYeuCauElement.textContent.trim());
+            savedValues.push(soYeuCauRowValues);
+        }
+
+
+        let congDoanRowValues = [];
+        let congDoanCells = table.rows[0].cells;
+        for (let i = 0; i < congDoanCells.length; i++) {
+            let cellValue = congDoanCells[i].textContent.trim(); 
+            congDoanRowValues.push(cellValue);
+        }
+        savedValues.push(congDoanRowValues);
+
+
+        let msnvRowValues = [];
+        let msnvCells = table.rows[1].cells;
+        for (let i = 0; i < msnvCells.length; i++) {
+            let cellValue = msnvCells[i].textContent.trim();
+            msnvRowValues.push(cellValue);
+        }
+        savedValues.push(msnvRowValues);
+
+        for (let i = 0; i < table.rows.length; i++) {
+            let rowValues = [];
+            let cells = table.rows[i].cells;
+
+            for (let j = 0; j < cells.length; j++) {
+                let inputElement = cells[j].querySelector('input, select');
+                if (inputElement) {
+                    rowValues.push(inputElement.value);
+                }
+            }
+
+            if (rowValues.length > 0) {
+                savedValues.push(rowValues);
+            }
+        }
+
+        let formData = new FormData();
+
+        formData.append('savedValues', JSON.stringify(savedValues));
+
+        let csrfToken = document.cookie.match(/csrftoken=([^;]+)/)[1];
+
+        $.ajax({
+            url:"{% url 'save_kiemtratuchu'%}",
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            success: function(response) {
+                
+                if (response.success) {
+                    window.location.href = response.redirect_url;
+                }
+
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
+
+
+
+<style>
+
+    input[type="text"], select {
+        width: 90px;
+        padding: 5px; 
+        border: 1px solid #ccc; 
+        border-radius: 4px; 
+        box-sizing: border-box; 
+        margin-bottom: 5px; 
+    }
+    table {
+        border-collapse: collapse;
+        margin-top: 20px;
+        width: 80%;
+        margin: auto;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center; 
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .stage-cell, .total-time-cell {
+        font-weight: bold;
+    }
+
+    #dataTable {
+        width: 1200px; 
+    }
+
+</style>
+{% endblock %}

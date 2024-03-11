@@ -1,0 +1,51 @@
+<!-- request_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="container">
+    <h1 class="my-4">Chi tiết số yêu cầu</h1>
+
+    <style>
+        /* Custom styles for fixed div width */
+        .custom-div {
+            width: 200px; /* Set the fixed width for the divs */
+        }
+    </style>
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th scope="row">Số yêu cầu</th>
+                <td>{{ request_info.request_number }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Số lượng</th>
+                <td>{{ request_info.quantity }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Sno</th>
+                <td>{{ request_info.order.sno }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Loại S</th>
+                <td>{{ request_info.order.type_s }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Vật liệu</th>
+                <td>{{ request_info.order.materials }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Quy cách 1 pcs</th>
+                <td>{{ request_info.order.specification }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <a href="{% url 'edit_request' request_info.id %}" class="btn btn-primary">Chỉnh sửa</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

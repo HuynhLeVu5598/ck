@@ -1,0 +1,15 @@
+<!-- templates/clear_order.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Order</title>
+</head>
+<body>
+    <h2>Clear Order</h2>
+    <form method="post" action="{% url 'clear_order' %}">  <!-- Sửa đường dẫn tới view -->
+        {% csrf_token %}
+        <button type="submit">Clear Order</button>
+    </form>
+
+</body>
+</html>

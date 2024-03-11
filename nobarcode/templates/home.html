@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+
+
+      <!-- Cột chứa các dropdown -->
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chọn thông số</h3>
+
+
+            <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">Loại S </label>
+              <div class="col-sm-8">
+                  <select class="form-control" id="orderDropdown" onchange="changeOrder(this)">
+                      <option value="" disabled selected>Chọn loại S</option>
+   
+                      {% for choice in choose_types %}
+                          <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                      {% endfor %}
+                  
+                  </select>
+              </div>
+          </div>
+            
+            
+
+            <script>
+
+              document.addEventListener("DOMContentLoaded", function() {
+                var orderDropdown = document.getElementById("orderDropdown");
+                orderDropdown.selectedIndex = 0;  // Index 0 corresponds to the "Chọn S no" option
+              });
+
+              function changeOrder(dropdown) {
+                  var selectedOption = dropdown.options[dropdown.selectedIndex];
+                  var selectedPosition = dropdown.selectedIndex;  // Lấy vị trí chọn của dropdown
+
+                  // window.location.href = "/orders/" + dropdown.value + "/";
+                  window.location.href = "/types/" + selectedPosition + "/";  // Sử dụng vị trí chọn trong URL
+              }
+            </script>
+            
+
+
+          </div>
+          
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<style>
+  #custom-table {
+      width: 100%;
+      border-collapse: collapse;
+  }
+
+  #custom-table th,
+  #custom-table td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #dee2e6;
+  }
+
+  #custom-table input {
+      width: 100px;
+      height: 30px;
+      margin-right: 10px;
+      border: 1px solid #ced4da;
+  }
+
+  #custom-table button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+  }
+
+  #custom-table button:hover {
+      background-color: #218838;
+  }
+
+  #custom-table .remove-button {
+      background-color: #dc3545;
+  }
+
+  #custom-table .remove-button:hover {
+      background-color: #c82333;
+  }
+</style>
+{% endblock %}

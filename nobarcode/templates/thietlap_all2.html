@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{%load static%}
+{% csrf_token %}
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+
+        <div class="row col-md-12">
+          <div class="col-md-5 grid-margin stretch-card">
+            <div class="card">
+              <div class="card-body">
+                <h3>Chọn thông số</h3>
+
+                  <!-- Dropdown 2 -->
+
+
+                  <div class="form-group row">
+                    <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
+                    <label id="soYeuCauLabel" class="col-sm-4 col-form-label">{{ so_yeu_cau }}</label>
+                    <input type="hidden" name="so_yeu_cau" value="{{ so_yeu_cau }}">
+                </div>
+
+                <!-- Dropdown 3 -->
+                <div class="form-group row">
+                  <label for="exampleFormControlInput3" class="col-sm-4 col-form-label">Số lượng</label>
+                  <label id="soLuongLabel" class="col-sm-4 col-form-label">{{ so_luong }}</label>
+                  <input type="hidden" name="so_luong" value="{{ so_luong }}">
+                </div>
+
+                <!-- Radio Buttons -->
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
+                  <label id="loaiSChuanLabel" class="col-sm-4 col-form-label">{{ loai_s_chuan }}</label>
+                  <input type="hidden" name="loai_s_chuan" value="{{ loai_s_chuan }}">
+                </div>
+
+                <!-- Dropdown 1 -->
+                <div class="form-group row">
+                  <label for="exampleFormControlInput1" class="col-sm-4 col-form-label">S no</label>
+                  <label id="sNoLabel" class="col-sm-4 col-form-label">{{ s_no }}</label>
+                  <input type="hidden" name="selected_order_sno" value="{{ s_no }}">
+                </div>
+
+
+                <!-- Dropdown 4 -->
+                <div class="form-group row">
+                  <label for="orderDropdown" class="col-sm-4 col-form-label">Vật liệu</label>
+
+
+
+                  <div class="col-sm-8">
+                    <input list="orderDropdown" class="form-control" id="orderInput" name="orderInput" onchange="changeOrder(this)" autocomplete="off">
+                    <datalist id="orderDropdown">
+                        <option value="" disabled>Chọn vật liệu</option>
+                        {% for material in materials %}
+                            <option>{{ material }}</option>
+                        {% endfor %}
+                    </datalist>
+                    
+                    <input type="hidden" name="selected_material" id="selectedMaterial" value="">
+                </div> 
+
+                </div>
+
+
+
+                <script>
+                  function changeOrder(inputElement) {
+                      var selectedValue = inputElement.value;
+                      document.getElementById("selectedMaterial").value = selectedValue;
+                  }
+                </script>
+
+                
+
+                <div class="form-group row">
+                  <label for="exampleFormControlSelect5" class="col-sm-4 col-form-label" style="width: 120px;">Quy cách 1 pcs </label>
+                  <div class="col-sm-8">
+                    <div class="input-group" style="width: 100%;">
+                      <select class="custom-select" id="quyCachSelectElement" onchange="handleInputChange()">
+                        <option selected></option>
+                        <option value="1">Ø</option>
+                        <option value="2">T</option>
+                      </select>
+                      <input type="text" class="form-control" id="quyCachInput" aria-label="Text input with dropdown button" style="height: 38px; width: 180px;" oninput="handleInputChange()">
+                    </div>
+                  </div>
+                </div>
+                
+                <input type="hidden" id="hiddenQuyCach" name="hiddenQuyCach">
+                
+                <script>
+                  function handleInputChange() {
+                    var quyCachInputValue = document.getElementById('quyCachInput').value;
+                
+                    var selectElement = document.getElementById("exampleFormControlSelect5");
+                    var selectedText = selectElement.options[selectElement.selectedIndex].text;
+
+                    var combinedValue = selectedText + quyCachInputValue;
+                    document.getElementById("hiddenQuyCach").value = combinedValue;
+                  }
+                </script>
+                
+          
+
+
+
+
+
+
+                <div class="form-group row">
+                  <label for="exampleFormControlSelect5" class="col-sm-10 col-form-label" style="width: 20px;">Thời gian gia công 1 pcs </label>
+                </div>
+
+                <div class="form-group row grid-margin stretch-card">
+
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="table-responsive pt-0">
+                              <table class="table table-bordered" id="custom-table">
+                                  <thead>
+                                      <tr>
+                                        <th style="width: 5%;">Stt</th>
+                                        <th style="width: 55%;">Công đoạn</th>
+                                        <th style="width: 30%;">Thời gian(phút)</th>
+                                        <th style="width: 10%;"></th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                  </tbody>
+                              </table>
+                              <button type="button" onclick="addTableRow()" class="btn btn-success btn-sm">+</button>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+              
+
+
+
+
+
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-md-7 grid-margin stretch-card">
+            {% if pdf_path %}
+              <iframe src="{{ pdf_path }}" width="100%" height="1120px" frameborder="0"></iframe>
+            {% endif %}
+            <input type="text" name="pdf_path" value="{{ pdf_path }}" hidden>
+              
+          </div>
+
+          <div class="col-md-12 grid-margin stretch-card">
+            <div class="form-group row">
+              <div class="col-sm-8 offset-sm-4">
+                <button onclick="collectTableData()" type="button" class="btn btn-primary">Lưu</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
+
+
+<script>
+
+var csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+function collectTableData() {
+    var soYeuCauLabelElement = document.getElementById('soYeuCauLabel');
+    var soYeuCauValue = soYeuCauLabelElement.textContent || soYeuCauLabelElement.innerText;
+
+    var soLuongLabelElement = document.getElementById('soLuongLabel');
+    var soLuongValue = soLuongLabelElement.textContent || soLuongLabelElement.innerText;
+
+    var loaiSChuanLabelElement = document.getElementById('loaiSChuanLabel');
+    var loaiSChuanValue = loaiSChuanLabelElement.textContent || loaiSChuanLabelElement.innerText;
+
+    var sNoLabelElement = document.getElementById('sNoLabel');
+    var sNoValue = sNoLabelElement.textContent || sNoLabelElement.innerText;
+
+    // var orderDropdownElement = document.getElementById('orderDropdown');
+    // var selectedMaterialValue = orderDropdownElement.value;
+    var selectedMaterialValue = document.getElementById('selectedMaterial').value;
+
+
+    var quyCachSelectElement = document.getElementById('quyCachSelectElement');
+    var selectedQuyCachValue = quyCachSelectElement.options[quyCachSelectElement.selectedIndex].text;
+
+    var quyCachInputValueElement = document.getElementById('quyCachInput');
+    var quyCachInputValue = quyCachInputValueElement.value;
+
+    var combinedQuyCachValue = selectedQuyCachValue + quyCachInputValue;
+
+    var pdfPathInput = document.querySelector('input[name="pdf_path"]');
+    var pdfPathValue = pdfPathInput.value;
+
+    var tableData = [];
+
+    // Thêm giá trị từ biến vào đối tượng tableData
+    tableData.push({
+        'soYeuCau': soYeuCauValue,
+        'soLuong': soLuongValue,
+        'loaiSChuan': loaiSChuanValue,
+        'sNo': sNoValue,
+        'selectedMaterial': selectedMaterialValue,
+        'combinedQuyCach': combinedQuyCachValue,
+        'pdf_path':pdfPathValue
+    });
+
+    var tableBody = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+    var rows = tableBody.getElementsByTagName('tr');
+
+    for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0) {
+            var rowData = {};
+            rowData['stt'] = cells[0].innerText;
+
+            // Lấy giá trị từ input thay vì select
+            var inputElement = cells[1].getElementsByTagName('input')[0];
+            rowData['congdoan_name'] = inputElement.value;
+
+            rowData['thoigian'] = cells[2].getElementsByTagName('input')[0].value;
+            tableData.push(rowData);
+        }
+    }
+
+
+    $.ajax({
+        type: "POST",
+        url: "{% url 'post_order' %}",
+        data: {
+            'csrfmiddlewaretoken': csrfToken,  // Thêm CSRF token vào dữ liệu
+            'tableData': tableData
+        },
+        success: function (response) {
+            console.log("Server response:", response);
+            if (response.success) {
+                // Thực hiện chuyển hướng
+                window.location.href = response.redirect_url;
+            }
+        },
+        error: function (error) {
+            console.error("Error:", error);
+        }
+    });
+}
+
+
+
+
+
+
+  // var rowCounter = 1;
+  function addTableRow() {
+      var table = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+      var newRow = table.insertRow(table.rows.length);
+
+      // Cell 1
+      var rows = table.getElementsByTagName('tr');
+      rowCounter = rows.length;
+      var cell1 = newRow.insertCell(0);
+      cell1.innerHTML = rowCounter++;
+
+      // Cell 2
+      var cell2 = newRow.insertCell(1);
+
+      cell2.innerHTML = `
+
+            <input list="orderDropdown1" class="form-control custom-input" id="orderInput" name="orderInput" onchange="changeOrder(this)" autocomplete="off">
+            <datalist id="orderDropdown1" class="custom-datalist">
+                <option value="" disabled>Chọn công đoạn</option>
+                {% for processing_stage in processing_stages %}
+                    <option>{{ processing_stage.process_name }}</option>
+                {% endfor %}
+            </datalist>
+
+      `;
+
+      // Thêm các quy tắc CSS trực tiếp hoặc thông qua lớp CSS
+      var customInput = document.querySelector('.custom-input');
+      var customDatalist = document.querySelector('.custom-datalist');
+
+      // Điều chỉnh kích thước và giao diện của input và datalist
+      customInput.style.width = '100%';  // Chiều rộng 100% của parent container
+      customInput.style.padding = '8px';  // Điều chỉnh padding theo ý muốn
+      customDatalist.style.maxHeight = '200px';  // Điều chỉnh chiều cao tối đa của datalist
+
+      // Cell 3
+      var cell3 = newRow.insertCell(2);
+      cell3.innerHTML = '<input type="number" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, \'\');" />';
+
+      // Cell 4 (Action)
+      var cell4 = newRow.insertCell(3);
+      var removeButton = document.createElement("button");
+      removeButton.type = "button";
+      removeButton.innerText = "-";
+      removeButton.className = "btn btn-danger btn-sm remove-button";
+
+
+      removeButton.onclick = function() { removeTableRow(this); };
+      cell4.appendChild(removeButton);
+  }
+
+  function removeTableRow(button) {
+    var row = button.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+
+    // Update row numbers after removing a row
+    var tableBody = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+    var rows = tableBody.getElementsByTagName('tr');
+
+    for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0) {
+            cells[0].innerHTML = i + 1;
+        }
+    }
+}
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+
+
+      <!-- Cột chứa các dropdown -->
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Số yêu cầu</h3>
+
+
+      
+
+          <div class="form-group row">
+            <label for="orderDropdown" class="col-sm-4 col-form-label">Số yêu cầu</label>
+            <div class="col-sm-8">
+                <input list="orderDropdown" class="form-control" id="orderInput" name="orderInput" oninput="toUpperCase(this)" onchange="changeOrder(this)" autocomplete="off">
+                <datalist id="orderDropdown">
+                    {% for request_info in all_request_info %}
+                        {% if request_info.rep_number == 0 %}
+                          <option>{{ request_info.request_number }} </option>
+                        {% else %}
+                          <option value="{{ request_info.request_number }} - {{request_info.rep_number}}">{{ request_info.request_number }} - {{request_info.rep_number}} </option>
+                        {% endif %}
+                    {% endfor %}
+                </datalist>
+
+                <script>
+                  function toUpperCase(input) {
+                      input.value = input.value.toUpperCase();
+                  }
+              </script>
+                
+              
+                {% if request_info.rep_number == 0 %}
+                  <label id="selectedRequestLabel" class="col-form-label" style="display: none;">{{ request_info.request_number }}</label>
+                {% else %}
+                  <label id="selectedRequestLabel" class="col-form-label" style="display: none;">{{ request_info.request_number }} - {{request_info.rep_number}}</label>
+                {% endif %}
+
+
+                <p id="errorText" style="color: red; display: none;">Giá trị không hợp lệ. Vui lòng chọn từ danh sách.</p>
+            </div>
+        </div>
+        
+
+            <script>
+              document.addEventListener("DOMContentLoaded", function() {
+                  var orderDropdown = document.getElementById("orderDropdown");
+                  orderDropdown.selectedIndex = 0;  // Index 0 corresponds to the "Chọn số yêu cầu" option
+              });
+          
+
+
+
+              function changeOrder(input) {
+                    var selectedRequestLabel = document.getElementById('selectedRequestLabel');
+                    var errorText = document.getElementById('errorText');
+                    var orderDropdown = document.getElementById('orderDropdown');
+                
+                    var enteredValue = input.value;
+                    var validValues = Array.from(orderDropdown.options).map(option => option.value);
+                
+                    if (validValues.includes(enteredValue)) {
+                        selectedRequestLabel.innerText = enteredValue;
+                        // selectedRequestLabel.style.display = 'block';
+                        errorText.style.display = 'none';
+
+                        var selectedRequest = input.value; 
+                 
+
+                        if (selectedRequest) {
+                            window.location.href = "/soyeucau/" + selectedRequest + "/";  
+                        }
+
+
+
+                    } else {
+                        // selectedRequestLabel.style.display = 'none';
+                        errorText.style.display = 'block';
+
+
+                    }
+
+
+                }
+
+
+
+          </script>
+          
+          
+            
+
+
+          </div>
+          
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

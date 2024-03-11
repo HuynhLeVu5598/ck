@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+
+
+      <!-- Cột chứa các dropdown -->
+      <div class="col-md-4 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chi tiết Sno</h3>
+
+            <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+              <label for="orderDropdown" class="col-sm-4 col-form-label">{{ order.sno }}</label>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Số yêu cầu</label>
+              <label class="col-sm-4 col-form-label">{{ order.request_number }}</label>
+            </div>
+
+            <div class="form-group row">
+              <label for="exampleFormControlSelect3" class="col-sm-4 col-form-label">Số lượng</label>
+              <label for="exampleFormControlSelect3" class="col-sm-4 col-form-label">{{ order.quantity|default:"" }}</label>
+            </div>
+
+            <!-- Radio Buttons -->
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
+              <label class="col-sm-4 col-form-label">{{ order.type_s|default:""  }}</label>
+            </div>
+
+            <!-- Dropdown 4 -->
+            <div class="form-group row">
+              <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">Vật liệu</label>
+              <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">{{ order.order_material.material.name|default:""}}</label>
+            </div>
+
+            <!-- Dropdown 5 -->
+            <div class="form-group row">
+              <label for="exampleFormControlSelect5" class="col-sm-4 col-form-label" style="width: 120px;">Quy cách 1 pcs</label>
+              <label for="exampleFormControlSelect5" class="col-sm-4 col-form-label" style="width: 120px;">{{ order.specification|default:"" }}</label>
+            </div>
+
+            <div class="form-group row">
+              <label for="exampleFormControlSelect5" class="col-sm-10 col-form-label" style="width: 20px;">Thời gian gia công 1 pcs</label>
+            </div>
+
+            <div class="col-lg-20 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div class="table-responsive pt-0">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Công đoạn</th>
+                          <th>Thời gian gia công (phút)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for processing_time in order.processing_times.all %}
+                          <tr>
+                            <td>{{ processing_time.stage.process_name|default:"N/A" }}</td>
+                            <td>{{ processing_time.time_required|default:"N/A" }}</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="col-md-8 grid-margin stretch-card">
+        {% if order.drawing %}
+          <iframe src="{{ pdf_path }}" width="100%" height="1120px" frameborder="0"></iframe>
+
+        {% else %}
+          <p>No drawing PDF available.</p>
+        {% endif %}
+      </div>
+
+
+
+
+  </div>
+</div>
+
+
+
+<script>
+  function onSnoChange(dropdown) {
+    var selectedSno = dropdown.value;
+
+    // Ẩn hoặc hiển thị phần tử dựa trên giá trị của dropdown
+    if (selectedSno !== "") {
+      detailsSection.style.display = "block";  // Hiển thị
+    } else {
+      detailsSection.style.display = "none";   // Ẩn
+    }
+
+    // Thêm logic khác nếu cần
+  }
+
+
+</script>
+
+
+
+<script>
+  function addTableRow() {
+      var table = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+      var newRow = table.insertRow(table.rows.length);
+
+      // Cell 1
+      var cell1 = newRow.insertCell(0);
+      cell1.innerHTML = '<input type="text" class="form-control" />';
+
+      // Cell 2
+      var cell2 = newRow.insertCell(1);
+      cell2.innerHTML = '<input type="text" class="form-control" />';
+
+      // Cell 3 (Action)
+      var cell3 = newRow.insertCell(2);
+      var removeButton = document.createElement("button");
+      removeButton.type = "button";
+      removeButton.innerText = "-";
+      removeButton.className = "btn btn-danger remove-button";
+      removeButton.onclick = function() { removeTableRow(this); };
+      cell3.appendChild(removeButton);
+  }
+
+  function removeTableRow(button) {
+      var row = button.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+  }
+</script>
+
+
+<style>
+  #custom-table {
+      width: 100%;
+      border-collapse: collapse;
+  }
+
+  #custom-table th,
+  #custom-table td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #dee2e6;
+  }
+
+  #custom-table input {
+      width: 100px;
+      height: 30px;
+      margin-right: 10px;
+      border: 1px solid #ced4da;
+  }
+
+  #custom-table button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+  }
+
+  #custom-table button:hover {
+      background-color: #218838;
+  }
+
+  #custom-table .remove-button {
+      background-color: #dc3545;
+  }
+
+  #custom-table .remove-button:hover {
+      background-color: #c82333;
+  }
+</style>
+{% endblock %}

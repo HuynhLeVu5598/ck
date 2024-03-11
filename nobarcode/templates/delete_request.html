@@ -1,0 +1,35 @@
+<!-- delete_request.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Xác nhận xóa số yêu cầu</h1>
+
+    <p>Bạn có chắc chắn muốn xóa số yêu cầu có thông tin sau đây?</p>
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th scope="row">Số yêu cầu</th>
+                <td>{{ request_info.request_number }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Số lượng</th>
+                <td>{{ request_info.quantity }}</td>
+            </tr>
+            <!-- Thêm các trường khác cần hiển thị -->
+
+            <tr>
+                <td colspan="2">
+                    <form method="post" action="{% url 'delete_request' request_info.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                        <a href="{% url 'request_detail' request_info.id %}" class="btn btn-secondary">Hủy</a>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

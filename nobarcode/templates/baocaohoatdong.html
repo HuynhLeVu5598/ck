@@ -1,0 +1,492 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{%comment%}
+<!-- <form id="myForm" method="post" action="{% url 'save_baocaohoatdong' %}"> -->
+{%endcomment%}
+
+    {% csrf_token %}
+    <div id="tableContainer">
+        <div style="margin-left: 50px;">
+            <h2 style="margin-top: 20px; text-align: center;">Báo cáo hoạt động hằng ngày</h2>
+
+            <table id="dataTable" class="table" style="width: 100%; margin: auto; border-collapse: collapse;">
+        
+                <tr>
+                    <td colspan="5" class="stage-cell">Họ và tên</td>
+                    <td colspan="2" class="stage-cell">MSNV</td>
+                    <td colspan="2" class="stage-cell">Ca làm việc</td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="stage-cell" id="full_name_cell">{{ full_name }}</td>
+                    <td colspan="2" class="stage-cell" id="current_user_cell">{{ current_user }}</td>
+                    <td colspan="2" class="stage-cell">
+                        <select name="selected_ca_lam_viec" id="id_selected_ca_lam_viec">
+                            {% for ca in ca_lam_viec %}
+                                <option value="{{ ca }}">{{ ca }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="4" class="stage-cell">Lý do không thể tránh</td>
+                    <td colspan="5" class="stage-cell">Thời gian làm việc</td>
+                </tr>
+
+                <tr>
+                    <td class="stage-cell" rowspan="2">E No.</td>
+                    <td class="stage-cell" rowspan="2">Thời gian bắt đầu</td>
+                    <td class="stage-cell" rowspan="2">Thời gian kết thúc</td>
+                    <td class="stage-cell" rowspan="2">Thời gian</td>
+                    <td colspan="1"> </td>
+                    <td colspan="1"> </td>
+                    <td colspan="1"> </td>
+                    <td colspan="1"> </td>
+                    <td colspan="1"> </td>
+                </tr>
+
+                <tr>
+                    <td class="stage-cell" colspan="5" style="width: 500px;">Ghi chú</td>
+                
+                {%if worksdate%}
+                </tr>
+                    {% for workdate in worksdate %}
+
+                        <tr> 
+                            <td>
+                                <select name="eno">
+
+                                    <option value="{{ workdate.eno }}">
+                                        {{ workdate.eno }}
+                                    </option>
+
+                                </select>
+                            </td>
+                            <td>
+                                <div class="start_time">
+                                    {{ workdate.time_start|time:"H:i:s" }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="end_time">
+                                    {{ workdate.time_end|time:"H:i:s" }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="duration_time" data-minutes="{{ workdate.duration_time|time:'i' }}">
+                                    {{ workdate.duration_time }}
+                                </div> 
+                            </td>
+                            <td colspan="5">
+                                <div class="note">
+                                    {{ workdate.note }}
+                                </div> 
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                {% endif %}
+
+                <tr>
+                    <td style="border: none;">
+                        <button type="button" onclick="addTableRow()" class="btn btn-success btn-sm">+</button>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td colspan="3" class="stage-cell">Tổng thời gian phụ</td>
+                    <td class="stage-cell" id="totalDurationCell"></td>
+                    <td colspan="5" class="stage-cell"></td>
+                </tr> 
+
+                <tr>
+                    <td colspan="3">E100: Sửa chữa do trở ngại máy</td>
+                    <td colspan="3">E600: Chỉnh lý chỉnh đốn vệ sinh</td>
+                    <td colspan="3" rowspan="6"></td>
+                </tr>
+                <tr>
+                    <td colspan="3">E200: Chờ chỉ thị làm việc</td>
+                    <td colspan="3">E700: Chào sáng, chào chiều</td>
+                </tr>
+                <tr>
+                    <td colspan="3">E300: Chờ linh kiện vật liệu</td>
+                    <td colspan="3">E800: Chuẩn bị công việc</td>
+                </tr>
+                <tr>
+                    <td colspan="3">E400: Chỉ đạo huấn luyện - Họp thảo luận</td>
+                    <td colspan="3">E900: Công việc chuẩn bị làm thử</td>
+                </tr>
+                <tr>
+                    <td colspan="3">E500: Lý do khác</td>
+                    <td colspan="3"></td>
+                </tr>   
+            </table>
+        </div>
+        <div style="margin-top: 20px; margin-left: 40px; ">
+            <button class="btn btn-primary" onclick="saveValues()">Lưu</button>
+    
+        </div>
+    </div>
+<!-- </form> -->
+
+<script>
+    function calculateTotalDuration() {
+        var totalDurationCell = document.getElementById('totalDurationCell');
+        var durationElements = document.querySelectorAll('.duration_time');
+        var totalMinutes = 0;
+
+        durationElements.forEach(function(element) {
+            var minutes = parseInt(element.textContent);
+            totalMinutes += isNaN(minutes) ? 0 : minutes;
+        });
+
+
+        totalDurationCell.textContent = totalMinutes;
+    }
+
+    // Call the function to calculate total duration
+    calculateTotalDuration();
+</script>
+
+
+<script>
+
+    var enoChoices = [
+        {% for value, label in eno_choices %}
+            ['{{ value }}', '{{ label }}'],
+        {% endfor %}
+    ];
+
+    function addTableRow() {
+        var table = document.getElementById("dataTable");
+
+        var index = document.getElementById("dataTable").rows.length - 7;
+
+        var newRow = table.insertRow(index );
+
+        var cell1 = newRow.insertCell(0);
+        var selectInput = document.createElement('select');
+        selectInput.name = 'newInput1';
+
+
+        for (var i = 0; i < enoChoices.length; i++) {
+            var option = document.createElement('option');
+            option.value = enoChoices[i][0];
+            option.text = enoChoices[i][1];
+            selectInput.appendChild(option);
+        }
+        cell1.appendChild(selectInput);
+
+
+    
+        var startTime; 
+        var timerStarted = false; 
+
+        var cell2 = newRow.insertCell(1);
+
+        var startTimeDisplay = document.createElement('div');
+        startTimeDisplay.textContent = '';
+        startTimeDisplay.className = 'start_time';
+
+        var startButton = document.createElement('button');
+        startButton.innerHTML = 'Bắt đầu';
+        startButton.className = 'btn btn-success';
+
+        startButton.addEventListener('click', function() {
+            if (!timerStarted) {
+                var confirmation = confirm('Bạn có chắc muốn bắt đầu tính thời gian?');
+                
+                if (confirmation) {
+                    startTime = new Date().getTime(); 
+                    updateStartTimeDisplay(); 
+                    timerStarted = true; 
+                    // alert('Đã bắt đầu tính thời gian!');
+                    startButton.style.display = 'none';
+                } 
+                // else {
+                //     alert('Đã hủy bắt đầu tính thời gian.');
+                // }
+            } 
+            else {
+                alert('Thời gian đã được bắt đầu!');
+            }
+        });
+
+
+
+        cell2.appendChild(startButton);
+        cell2.appendChild(startTimeDisplay);
+
+        function updateStartTimeDisplay() {
+            if (startTime) {
+                var startDate = new Date(startTime);
+                var hours = startDate.getHours();
+                var minutes = startDate.getMinutes();
+                var seconds = startDate.getSeconds();
+                startTimeDisplay.textContent = hours + ':' + minutes + ':' + seconds;
+            }
+        }
+
+        var cell3 = newRow.insertCell(2);
+
+        var endTimeDisplay = document.createElement('div');
+        endTimeDisplay.textContent = ''; 
+        endTimeDisplay.className = 'end_time';
+
+        var endButton = document.createElement('button');
+        endButton.innerHTML = 'Kết thúc';
+        endButton.className = 'btn btn-danger';
+
+
+        endButton.addEventListener('click', function() {
+        if (timerStarted) {
+            var confirmation = confirm('Bạn có chắc muốn kết thúc tính thời gian?');
+
+            if (confirmation) {
+                var endTime = new Date().getTime(); 
+                updateEndTimeDisplay(endTime);
+                var elapsedTime = endTime - startTime;
+
+
+                var minutes = Math.floor(elapsedTime / (1000 * 60)); 
+                input4.value = minutes;
+                // alert('Đã kết thúc tính thời gian!');
+                endButton.style.display = 'none';
+            } 
+            // else {
+            //     alert('Đã hủy kết thúc tính thời gian.');
+            // }
+        } else {
+            alert('Vui lòng bắt đầu trước khi kết thúc!');
+        }
+    });
+
+
+        cell3.appendChild(endButton);
+
+        cell3.appendChild(endTimeDisplay);
+
+        function updateEndTimeDisplay(endTime) {
+            if (endTime) {
+                var endDate = new Date(endTime);
+                var hours = endDate.getHours();
+                var minutes = endDate.getMinutes();
+                var seconds = endDate.getSeconds();
+                endTimeDisplay.textContent = hours + ':' + minutes + ':' + seconds;
+            }
+        }
+
+
+        var cell4 = newRow.insertCell(3);
+        var input4 = document.createElement('input');
+        // input4.type = 'text';
+        input4.type = 'number';
+        input4.name = 'newInput4';
+        input4.className = 'duration_time';
+
+        input4.disabled = true; 
+        cell4.appendChild(input4);
+
+        var cell5 = newRow.insertCell(4);
+        var input5 = document.createElement('input');
+        input5.type = 'text';
+        input5.name = 'newInput5';
+        input5.className = 'note';
+
+        input5.style.width = '400px'; 
+        cell5.appendChild(input5);
+        cell5.appendChild(document.createTextNode('     '))
+
+
+        cell5.colSpan = 5
+
+        var removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'btn btn-danger btn-sm';
+        removeButton.innerText = '-';
+        removeButton.onclick = function() {
+            removeTableRow(newRow);
+        };
+
+
+        cell5.appendChild(removeButton);
+
+
+    }
+
+
+
+    function removeTableRow(row) {
+        var table = row.parentNode.parentNode; 
+        table.deleteRow(row.rowIndex);
+    }
+
+    function durationToMinutes(duration) {
+        var parts = duration.split(':');
+        
+        var totalMinutes = parseInt(parts[0]) * 60 + parseInt(parts[1]) + parseInt(parts[2]) / 60;
+
+        return totalMinutes;
+    }
+
+    function saveValues() {
+        var table = document.getElementById("dataTable");
+        var rowCount = table.rows.length;
+        var full_name = document.getElementById("full_name_cell").textContent;
+        var current_user = document.getElementById("current_user_cell").textContent;
+        var selectedCa = document.getElementById("id_selected_ca_lam_viec").value;
+
+
+        var dataArray = [];
+
+        for (var i = 5; i < rowCount - 7; i++) {
+            var row = table.rows[i];
+
+            var input1 = row.cells[0].getElementsByTagName('select')[0];
+            var input1Value = input1 ? input1.value : '';
+
+            var input2 = row.cells[1].getElementsByClassName('start_time')[0];
+            var input2Value = input2 ? input2.textContent : '';
+
+            var input3 = row.cells[2].getElementsByClassName('end_time')[0];
+            var input3Value = input3 ? input3.textContent : '';
+
+            var input4 = row.cells[3].getElementsByClassName('duration_time')[0];
+            if (input4.tagName.toLowerCase() === 'input') {
+
+                input4Value = input4.value;
+            } else {
+
+                input4Value = input4.textContent || input4.innerText;
+                // input4Value = durationToMinutes(input4Value)
+
+            }
+
+
+            var input5 = row.cells[4].getElementsByClassName('note')[0];
+
+            if (input5 && input5.tagName.toLowerCase() === 'input') {
+                input5Value = input5.value;
+            } else {
+                input5Value = input5 ? input5.textContent || input5.innerText : '';
+
+            }
+
+
+            
+            // var input5 = row.cells[4].getElementsByClassName('note')[0];
+            // var input5Value = input5 ? input5.value : '';
+
+            // if (input1Value === '' || input2Value === '' || input3Value === '' || input4Value === '' || input5Value === '') {
+            //     alert('');
+            //     return; 
+            // }
+
+
+            if (input2Value === '') {
+                alert('Chưa nhấn nút bắt đầu');
+                return;
+            }
+
+            if (input3Value === '') {
+                alert('Chưa nhấn nút kết thúc');
+                return;
+            }
+
+            if (input5Value === '') {
+                alert('Chưa nhập ghi chú');
+                return;
+            }
+
+
+            var rowData = {
+                full_name: full_name,
+                current_user: current_user,
+                selectedCa: selectedCa,
+                input1: input1Value,
+                input2: input2Value,
+                input3: input3Value,
+                input4: input4Value,
+                input5: input5Value
+            };
+
+            dataArray.push(rowData);
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/save_baocaohoatdong/',
+            contentType: 'application/json',
+            data: JSON.stringify({ data: dataArray }),
+            success: function (data) {
+                console.log('Success:', data);
+                if (data.success) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    // alert('Không có giá trị');
+                    
+                }
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+}
+
+
+</script>
+
+
+
+
+<style>
+    .flatpickr-input {
+        width: 150px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    /* Style for the container */
+    #tableContainer {
+        margin-top: 20px;
+    }
+    input[type="text"], select {
+        width: 90px;
+        padding: 5px; 
+        border: 1px solid #ccc; 
+        border-radius: 4px; 
+        box-sizing: border-box; 
+        margin-bottom: 5px; 
+    }
+    table {
+        border-collapse: collapse;
+        margin-top: 20px;
+        width: 80%;
+        margin: auto;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center; 
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .stage-cell, .total-time-cell {
+        font-weight: bold;
+    }
+
+    #dataTable {
+        width: 1200px; 
+    }
+
+</style>
+{% endblock %}

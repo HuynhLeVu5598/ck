@@ -1,0 +1,92 @@
+<!-- request_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="container">
+    <h1 class="my-4">Chi tiết số yêu cầu</h1>
+
+    <style>
+        /* Custom styles for fixed div width */
+        .custom-div {
+            width: 200px; /* Set the fixed width for the divs */
+        }
+    </style>
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th scope="row">Số yêu cầu</th>
+                {% if request_info.rep_number == 0 %}
+                    <td>{{ request_info.request_number }}</td>
+                {% else %}
+                    <td>{{ request_info.request_number }} - {{ request_info.rep_number }}</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <th scope="row">Số lượng</th>
+                <td>{{ request_info.quantity }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Sno</th>
+                <td>{{ request_info.order.sno }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Loại S</th>
+                <td>{{ request_info.order.type_s }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Vật liệu</th>
+                <td>{{ materials }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Quy cách 1 pcs</th>
+                <td>{{ specification }}</td>
+            </tr>
+
+            <tr>
+                <th scope="row">Thời gian gia công 1 pcs</th>
+                <td>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Thứ tự công đoạn</th>
+                            <th scope="col">Công đoạn</th>
+                            <th scope="col">Thời gian gia công (phút)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for processing_time in request_info.order.sno.processing_times.all %}
+                            <tr>
+                                <td>{{ processing_time.stt }}</td>
+                                <td>{{ processing_time.stage.process_name }}</td>
+                                <td>{{ processing_time.time_required }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </td>
+            </tr>               
+            <tr>
+                <th scope="row">Bản vẽ</th>
+
+                <td >
+                    <iframe src="{% static drawing %}" width="100%" height="1120px" frameborder="0"></iframe>
+                </td>
+            </tr>
+                
+
+            <tr>
+                <td colspan="2">
+                    <a href="{% url 'edit_request_detail' request_info.id %}" class="btn btn-primary">Chỉnh sửa</a>
+                    
+                    <a href="{% url 'delete_request' request_info.id %}" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa không?')">Xóa</a>
+                </td>
+            </tr>
+
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}

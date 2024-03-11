@@ -1,0 +1,420 @@
+{% extends 'base.html' %}
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Select size</h4>
+
+
+            <div class="form-group row">
+              <label for="exampleFormControlSelect1" class="col-sm-4 col-form-label">S no</label>
+              <div class="col-sm-8">
+                <select class="form-control form-control-lg" id="exampleFormControlSelect1">
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select>
+              </div>
+            </div>
+
+
+            <div class="form-group row">
+              <label for="exampleFormControlSelect2" class="col-sm-4 col-form-label">Số yêu cầu</label>
+              <div class="col-sm-8">
+                <select class="form-control" id="exampleFormControlSelect2">
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select>
+              </div>
+            </div>
+
+
+            <div class="form-group row">
+              <label for="exampleFormControlSelect3" class="col-sm-4 col-form-label">Số lượng</label>
+              <div class="col-sm-8">
+                <select class="form-control form-control-sm" id="exampleFormControlSelect3">
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="form-group d-flex flex-row">
+          <div class="form-check mr-3">
+            <h1>PDF Viewer</h1>
+            <!-- <iframe src="{{ pdf_path }}" width="100%" height="800px" frameborder="0"></iframe> -->
+            <iframe src="" width="100%" height="800px" frameborder="1"></iframe>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="form-group d-flex flex-row">
+          <div class="form-check mr-3">
+            <label class="form-check-label font-weight-bold">
+              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+              Có S chuẩn 
+            </label>
+          </div>
+          <div class="form-check mr-3">
+            <label class="form-check-label font-weight-bold">
+              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
+              Sẽ làm S chuẩn
+            </label>
+          </div>
+          <div class="form-check mr-3">
+            <label class="form-check-label font-weight-bold">
+              <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
+              Không làm S chuẩn
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="form-group d-flex flex-row">
+          <div class="form-check mr-3">
+
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group row mb-3">
+              <label for="exampleFormControlSelect3" class="col-sm-4 col-form-label">Vật liệu</label>
+              <div class="col-sm-8">
+                <select class="form-control form-control-sm" id="exampleFormControlSelect3">
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select>
+              </div>
+            </div>
+      
+            <div class="form-group row mb-3">
+              <label for="exampleFormControlSelect3" class="col-sm-4 col-form-label" style="width: 120px;">Quy cách 1 pcs </label>
+              <div class="col-sm-8">
+                <div class="input-group" style="width: 100%;">
+                  <select class="custom-select" id="inputGroupSelect01">
+                    <option selected>...</option>
+                    <option value="1">Ø</option>
+                    <option value="2">T</option>
+                  </select>
+                  <input type="text" class="form-control" aria-label="Text input with dropdown button" style="height: 38px;width: 280px;">
+                </div>
+              </div>
+            </div>
+      
+          </div>
+        </div>
+      </div>
+      
+      
+
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="form-group d-flex flex-row">
+          <div class="form-check mr-3">
+
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+    </div>
+  </div>
+</div>
+
+{% block content %}
+
+
+
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+
+
+      <!-- Cột chứa các dropdown -->
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chọn thông số</h3>
+
+
+              
+            <!-- Trong template của bạn -->
+            <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+              <div class="col-sm-8">
+                  <select class="form-control" id="orderDropdown" name="selected_order" onchange="onSnoChange(this)">
+                      <option value="" selected>Chọn S no</option>
+                      
+                      {% for order in orders %}
+                          <option value="{{ order.id }}">{{ order.sno }}</option>
+                      {% endfor %}
+                      
+                  </select>
+              </div>
+            </div>
+
+            <script>
+              function onSnoChange(select) {
+                  var selectedOrder = select.options[select.selectedIndex].value;
+                  window.location.href = `/process_selected_order/?selected_order=${selectedOrder}`;
+              }
+            </script>
+
+
+            
+            
+            
+
+
+
+
+
+
+
+
+
+              <div id="detailsSection" style="display: block;">
+        
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Số yêu cầu</label>
+                  <label id="requestNumberLabel" class="col-sm-4 col-form-label"></label>
+                </div>
+
+
+
+
+              <!-- Dropdown 3 -->
+              <div class="form-group row">
+                <label for="exampleFormControlSelect3" class="col-sm-4 col-form-label">Số lượng</label>
+                <div class="col-sm-8">
+                  <select class="form-control form-control-sm" id="exampleFormControlSelect3">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Radio Buttons -->
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
+                <div class="col-sm-8">
+                  <div class="form-check form-check-inline mr-3">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                      Có S chuẩn 
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline mr-3">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
+                      Sẽ làm S chuẩn
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline mr-3">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3">
+                      Không làm S chuẩn
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dropdown 4 -->
+              <div class="form-group row">
+                <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">Vật liệu</label>
+                <div class="col-sm-8">
+                  <select class="form-control form-control-sm" id="exampleFormControlSelect4">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Dropdown 5 -->
+              <div class="form-group row">
+                <label for="exampleFormControlSelect5" class="col-sm-4 col-form-label" style="width: 120px;">Quy cách 1 pcs </label>
+                <div class="col-sm-8">
+                  <div class="input-group" style="width: 100%;">
+                    <select class="custom-select" id="exampleFormControlSelect5">
+                      <option selected>...</option>
+                      <option value="1">Ø</option>
+                      <option value="2">T</option>
+                    </select>
+                    <input type="text" class="form-control" aria-label="Text input with dropdown button" style="height: 38px;width: 180px;">
+                  </div>
+                </div>
+              </div>
+            
+            <div class="form-group row">
+              <label for="exampleFormControlSelect5" class="col-sm-10 col-form-label" style="width: 20px;">Thời gian gia công 1 pcs </label>
+            </div>
+
+
+          
+          <!-- Your existing HTML code -->
+          <div class="col-lg-20 grid-margin stretch-card">
+              <div class="card">
+                  <div class="card-body">
+                      <div class="table-responsive pt-0">
+                          <table class="table table-bordered" id="custom-table">
+                              <thead>
+                                  <tr>
+                                      <th>Công đoạn</th>
+                                      <th>Thời gian</th>
+                                      <th>Action</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                              </tbody>
+                          </table>
+                          <button type="button" onclick="addTableRow()" class="btn btn-success btn-sm">+</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          
+        </div>
+ 
+
+          
+          
+          </div>
+        </div>
+      </div>
+
+
+
+
+  </div>
+</div>
+
+
+
+<script>
+  function onSnoChange(dropdown) {
+    var selectedSno = dropdown.value;
+
+    // Ẩn hoặc hiển thị phần tử dựa trên giá trị của dropdown
+    if (selectedSno !== "") {
+      detailsSection.style.display = "block";  // Hiển thị
+    } else {
+      detailsSection.style.display = "none";   // Ẩn
+    }
+
+    // Thêm logic khác nếu cần
+  }
+
+
+</script>
+
+
+
+<script>
+  function addTableRow() {
+      var table = document.getElementById("custom-table").getElementsByTagName('tbody')[0];
+      var newRow = table.insertRow(table.rows.length);
+
+      // Cell 1
+      var cell1 = newRow.insertCell(0);
+      cell1.innerHTML = '<input type="text" class="form-control" />';
+
+      // Cell 2
+      var cell2 = newRow.insertCell(1);
+      cell2.innerHTML = '<input type="text" class="form-control" />';
+
+      // Cell 3 (Action)
+      var cell3 = newRow.insertCell(2);
+      var removeButton = document.createElement("button");
+      removeButton.type = "button";
+      removeButton.innerText = "-";
+      removeButton.className = "btn btn-danger remove-button";
+      removeButton.onclick = function() { removeTableRow(this); };
+      cell3.appendChild(removeButton);
+  }
+
+  function removeTableRow(button) {
+      var row = button.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+  }
+</script>
+
+
+<style>
+  #custom-table {
+      width: 100%;
+      border-collapse: collapse;
+  }
+
+  #custom-table th,
+  #custom-table td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #dee2e6;
+  }
+
+  #custom-table input {
+      width: 100px;
+      height: 30px;
+      margin-right: 10px;
+      border: 1px solid #ced4da;
+  }
+
+  #custom-table button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+  }
+
+  #custom-table button:hover {
+      background-color: #218838;
+  }
+
+  #custom-table .remove-button {
+      background-color: #dc3545;
+  }
+
+  #custom-table .remove-button:hover {
+      background-color: #c82333;
+  }
+</style>
+{% endblock %}

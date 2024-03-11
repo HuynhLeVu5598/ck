@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+
+<div class="main-panel">        
+  <div class="content-wrapper">
+    <div class="row">
+
+
+      <!-- Cột chứa các dropdown -->
+      <div class="col-md-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3>Chọn thông số</h3>
+
+
+              <div class="form-group row">
+                <label for="orderDropdown" class="col-sm-4 col-form-label">Loại S</label>
+                <div class="col-sm-8">
+
+                    <label class="col-sm-16 col-form-label">{{ types }}</label>
+
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group row">
+                <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+                <div class="col-sm-8">
+                    <input list="orderDropdown" class="form-control" id="orderInput" name="orderInput" oninput="toUpperCase(this)" onchange="changeOrder(this)" autocomplete="off">
+                    <datalist id="orderDropdown">
+                        {% for sno in all_sno %}
+                            <option>{{ sno }}</option>
+                        {% endfor %}
+                    </datalist>
+            
+                    <label id="selectedOrderLabel" class="col-form-label" style="display: none;">{{ sno }}</label>
+                    <p id="errorText" style="color: red; display: none;">Giá trị không hợp lệ. Vui lòng chọn từ danh sách.</p>
+                </div>
+                
+            </div>
+            <script>
+                function toUpperCase(input) {
+                    input.value = input.value.toUpperCase();
+                }
+            </script>
+            
+
+            
+        
+            
+
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var orderInput = document.getElementById("orderInput");
+                    orderInput.value = "";  
+
+                    orderInput.addEventListener("input", function() {
+                        var selectedOrderLabel = document.getElementById("selectedOrderLabel");
+                        selectedOrderLabel.textContent = orderInput.value;
+                    });
+
+                    orderInput.dispatchEvent(new Event("input"));
+                });
+
+                function changeOrder(input) {
+                    var selectedOrderLabel = document.getElementById('selectedOrderLabel');
+                    var errorText = document.getElementById('errorText');
+                    var orderDropdown = document.getElementById('orderDropdown');
+                
+                    var enteredValue = input.value;
+                    var validValues = Array.from(orderDropdown.options).map(option => option.value);
+                
+                    if (validValues.includes(enteredValue)) {
+                        selectedOrderLabel.innerText = enteredValue;
+                        // selectedOrderLabel.style.display = 'block';
+                        errorText.style.display = 'none';
+
+                        var selectedOrderSno = input.value;  
+
+                        if (selectedOrderSno) {
+                            window.location.href = "/sno/" + selectedOrderSno + "/";
+                        }
+
+
+
+                    } else {
+                        // selectedOrderLabel.style.display = 'none';
+                        errorText.style.display = 'block';
+
+
+                    }
+
+
+                }
+
+
+            </script>
+
+
+
+
+            
+            <!-- <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                var orderDropdown = document.getElementById("orderInput"); // Đổi tên thành "orderInput" để phản ánh thẻ input
+                orderDropdown.value = "";  // Đặt giá trị của input thành rỗng
+            });
+
+            function changeOrder(input) {
+                var selectedOrderSno = input.value;  // Lấy giá trị từ trường input
+
+                // Update label with selected order text
+                var selectedOrderLabel = document.getElementById("selectedOrderLabel");
+                selectedOrderLabel.textContent = selectedOrderSno;
+
+                if (selectedOrderSno) {
+                    window.location.href = "/sno/" + selectedOrderSno + "/";
+                }
+            }
+
+            </script> -->
+                        
+
+
+
+
+
+            <!-- <div class="form-group row">
+              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
+              <div class="col-sm-8">
+                  <select class="form-control" id="orderDropdown" onchange="changeOrder(this)">
+                      <option value="" disabled {% if not selected_order %}selected{% endif %}>Chọn S no</option>
+                      {% for order in orders %}
+                          <option value="{{ order.sno }}" {% if order == selected_order %}selected{% endif %}>{{ order.sno }}</option>
+                      {% endfor %}
+                  </select>
+
+                  <label id="selectedOrderLabel" class="col-form-label" style="display: none;">{{ selected_order.sno }}</label>
+
+              </div>
+          </div> -->
+          
+          <!-- <script>
+              document.addEventListener("DOMContentLoaded", function() {
+                  var orderDropdown = document.getElementById("orderDropdown");
+                  orderDropdown.selectedIndex = 0;  // Index 0 corresponds to the "Chọn S no" option
+              });
+          
+              function changeOrder(dropdown) {
+                  var selectedOption = dropdown.options[dropdown.selectedIndex];
+                  var selectedOrderSno = selectedOption.value;  // Lấy giá trị của trường sno
+          
+                  // Update label with selected order text
+                  var selectedOrderLabel = document.getElementById("selectedOrderLabel");
+                  selectedOrderLabel.textContent = selectedOrderSno;
+          
+                  window.location.href = "/sno/" + selectedOrderSno + "/";
+              }
+          </script> -->
+          
+        
+          
+            
+
+
+          </div>
+ 
+
+          
+          
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<style>
+  #custom-table {
+      width: 100%;
+      border-collapse: collapse;
+  }
+
+  #custom-table th,
+  #custom-table td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #dee2e6;
+  }
+
+  #custom-table input {
+      width: 100px;
+      height: 30px;
+      margin-right: 10px;
+      border: 1px solid #ced4da;
+  }
+
+  #custom-table button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+  }
+
+  #custom-table button:hover {
+      background-color: #218838;
+  }
+
+  #custom-table .remove-button {
+      background-color: #dc3545;
+  }
+
+  #custom-table .remove-button:hover {
+      background-color: #c82333;
+  }
+</style>
+{% endblock %}
