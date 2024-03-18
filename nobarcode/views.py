@@ -48,7 +48,10 @@ class EditRequestDetailView(View):
 
     def get(self, request, *args, **kwargs):
         request_info = RequestInfo.objects.get(pk=kwargs['pk']) 
-        instance = f'{request_info.order.sno}_{request_info.request_number}'
+        if request_info.rep_number !=0:
+            instance = f'{request_info.order.sno}_{request_info.request_number}_{request_info.rep_number}'
+        else:
+            instance = f'{request_info.order.sno}_{request_info.request_number}'
 
         context = {
             'request_info': request_info,
@@ -64,6 +67,13 @@ class EditRequestDetailView(View):
         request_info.rep_number = request.POST.get('rep_number')
         request_info.quantity = request.POST.get('quantity')
 
+        request_info.drawing_type = request.POST.get('drawing_type')
+        request_info.inspection = request.POST.get('inspection')
+        request_info.make_black = request.POST.get('make_black')
+        request_info.usually_or_urgent = request.POST.get('usually_or_urgent')
+
+
+
         request_info.save()
         return redirect('request_detail', pk=request_info.pk)
 
@@ -75,6 +85,7 @@ class RequestDetailView(DetailView):
     # context_object_name = 'request_info'
     def get(self, request, *args, **kwargs):
         request_info = RequestInfo.objects.get(pk=kwargs['pk'])  
+
         sno_instance = request_info.order.sno 
         selected_order = Order.objects.filter(sno=sno_instance)
         if len(selected_order) >=2:
@@ -141,14 +152,49 @@ class SnoEditDetailView(View):
 
     def get(self, request, sno=None, *args, **kwargs):
 
-        instance =sno
-        if '_' in sno:
-            sno, request_number = sno.split('_')
+        drawing = None
+  
+
+        if sno.count('_') == 2:
+            sno, request_number, so_rep = sno.split('_')
+            instance_tail = f'_{request_number}_{so_rep}'
+
             sno_instance = get_object_or_404(Sno, sno=sno)
+            
+            selected_order = Order.objects.filter(sno=sno_instance, syc_skc = request_number, so_rep = int(so_rep))
+
+            if not selected_order :
+   
+                selected_order = Order.objects.filter(sno=sno_instance)
+
+
+
+        elif sno.count('_') == 1:
+            sno, request_number = sno.split('_')
+
+            instance_tail = f'_{request_number}'
+        
+
+            sno_instance = get_object_or_404(Sno, sno=sno)
+            
             selected_order = Order.objects.filter(sno=sno_instance, syc_skc = request_number)
+            if not selected_order:
+                selected_order = Order.objects.filter(sno=sno_instance)
+
         else:
             sno_instance = get_object_or_404(Sno, sno=sno)
+            
             selected_order = Order.objects.filter(sno=sno_instance)#.first()
+            # so = selected_order.first()
+            # try:
+            #     request_info = RequestInfo.objects.get(order = so)
+            #     instance_tail = f'_{request_info.request_number}_{request_info.rep_number}'
+            # except:
+            #     instance_tail = ''
+            instance_tail = ''
+
+
+
 
 
         materials_all = Material.objects.all()
@@ -158,7 +204,9 @@ class SnoEditDetailView(View):
         ahead_specifications = []
         specifications = []
         type_s = ''
+  
         for sl in selected_order:
+
             type_s = sl.type_s
             try:
                 drawing = sl.drawing.url
@@ -177,19 +225,31 @@ class SnoEditDetailView(View):
         processing_times = ProcessingTime.objects.filter(sno=sno_instance)
         processing_stages = ProcessingStage.objects.all()
 
-        print(ahead_specifications)
-        print(specifications)
-        context = {
-            'instance': instance,
-            'sno_instance': sno_instance,
-            'type_s': type_s,
-            'materials': materials_all,
-            'form_data': zip(materials, ahead_specifications, specifications),
-            'processing_stages':processing_stages,
-            'processing_times': processing_times,
-            'drawing':drawing
+ 
+        if drawing is not None:
+            context = {
+                'instance_tail': instance_tail,
+                'sno_instance': sno_instance,
+                'type_s': type_s,
+                'materials': materials_all,
+                'form_data': zip(materials, ahead_specifications, specifications),
+                'processing_stages':processing_stages,
+                'processing_times': processing_times,
+                'drawing':drawing
 
-        }
+            }
+        else:
+            context = {
+                'instance_tail': instance_tail,
+                'sno_instance': sno_instance,
+                'type_s': type_s,
+                'materials': materials_all,
+                'form_data': zip(materials, ahead_specifications, specifications),
+                'processing_stages':processing_stages,
+                'processing_times': processing_times,
+
+
+            }     
 
         # return render(request, 'sno_material.html', context)
         return render(request, 'sno_detail_edit2.html', context)
@@ -217,12 +277,25 @@ class SnoDetailView(View):
 
     def get(self, request, sno=None, *args, **kwargs):
         # Get the Sno instance
-        instance =sno
-        if '_' in sno:
+        instance = sno
+        if sno.count('_') == 2:
+
+            sno, request_number, so_rep = sno.split('_')
+            # instance_tail = f'_{request_number}_{so_rep}'
+
+            sno_instance = get_object_or_404(Sno, sno=sno)
+            selected_order = Order.objects.filter(sno=sno_instance, syc_skc = request_number, so_rep = so_rep)
+
+        elif sno.count('_') == 1:
+            
             sno, request_number = sno.split('_')
+            # instance_tail = f'_{request_number}'
+
             sno_instance = get_object_or_404(Sno, sno=sno)
             selected_order = Order.objects.filter(sno=sno_instance, syc_skc = request_number)
+
         else:
+            # instance_tail = ''
             sno_instance = get_object_or_404(Sno, sno=sno)
             selected_order = Order.objects.filter(sno=sno_instance)#.first()
         if len(selected_order) >=2:
@@ -230,7 +303,10 @@ class SnoDetailView(View):
             specification = ''
             type_s = ''
             for sl in selected_order:
-                drawing = sl.drawing.url
+                try:
+                    drawing = sl.drawing.url
+                except:
+                    drawing = None
                 type_s = sl.type_s
                 if sl != selected_order.last():
                     materials += sl.materials + ', '
@@ -242,7 +318,6 @@ class SnoDetailView(View):
             processing_times = ProcessingTime.objects.filter(sno=sno_instance)
             # processing_stages = ProcessingStage.objects.all()
 
-            print(drawing)
             context = {
                 'instance': instance,
                 'type_s': type_s,
@@ -636,7 +711,7 @@ def sno_list(request):
     selected_types = 'Có S chuẩn'
     context = {'types':selected_types}
     # all_sno = Sno.objects.all()
-    # print('1: ',all_sno)
+
     # Lấy vị trí của order_type_s trong S_NO_CHOICES
     # all_sno = []
     # selected_orders = Order.objects.filter(type_s=selected_types)
@@ -656,11 +731,22 @@ def sno_kochuan_list(request):
     selected_types = 'Không làm S chuẩn'
     context = {'types':selected_types}
 
+    # selected_orders = Order.objects.filter(type_s=selected_types)
     selected_orders = Order.objects.filter(type_s=selected_types)
+
     # all_sno = selected_orders.values_list('sno__sno', flat=True)
     # all_sno = list(set(selected_orders.values_list('sno__sno', flat=True)))
-    all_sno = [f"{order.sno.sno}_{order.syc_skc}" if order.syc_skc is not None else f"{order.sno.sno}" for order in selected_orders]
-
+    # all_sno = [f"{order.sno.sno}_{order.syc_skc}_{order.so_rep}" if order.syc_skc is not None and order.sorep != 0 elif  else f"{order.sno.sno}" for order in selected_orders]
+    
+    all_sno = [
+        f"{order.sno.sno}_{order.syc_skc}_{order.so_rep}" 
+        if order.syc_skc is not None and order.so_rep != 0 and order.so_rep is not None
+        else f"{order.sno.sno}_{order.syc_skc}" 
+        if order.syc_skc is not None and (order.so_rep == 0 or order.so_rep is None)
+        else f"{order.sno.sno}"
+        for order in selected_orders
+    ]
+    all_sno = list(set(all_sno))
 
     context['all_sno'] = all_sno
 
@@ -757,6 +843,11 @@ def post_order(request):
         rep_value = request.POST.get('tableData[0][soRep]', '')
         type_s_value = request.POST.get('tableData[0][loaiSChuan]', '')
         sno_value = request.POST.get('tableData[0][sNo]', '')
+        loaibanve_value = request.POST.get('tableData[0][loaiBanVe]', '')
+        kiemtra_value = request.POST.get('tableData[0][kiemTra]', '')
+        lamden_value = request.POST.get('tableData[0][lamDen]', '')
+        thuonggap_value = request.POST.get('tableData[0][thuongGap]', '')
+
         drawing_file_old = request.POST.get('tableData[0][pdf_path]', '')
  
 
@@ -802,6 +893,7 @@ def post_order(request):
                             v1 = v1_value,
                             v2 = v2_value,
                             syc_skc = request_number_value,
+                            so_rep = rep_value,
                             drawing=drawing_file
                         )
                     else:
@@ -813,6 +905,8 @@ def post_order(request):
                             v1 = v1_value,
                             v2 = v2_value,
                             syc_skc = request_number_value,
+                            so_rep = rep_value,
+
                             # drawing=drawing_file
                         )
 
@@ -820,15 +914,21 @@ def post_order(request):
 
                 try:
                     request_info_object = RequestInfo.objects.get(request_number=request_number_value,rep_number = rep_value)
+
                 except RequestInfo.DoesNotExist:
                     request_info_object = RequestInfo.objects.create(
                         order=order_object,
                         request_number=request_number_value,
                         rep_number = rep_value,
-                        quantity=quantity_value
+                        quantity=quantity_value,
+                        drawing_type = loaibanve_value,
+                        inspection = kiemtra_value,
+                        make_black = lamden_value,
+                        usually_or_urgent = thuonggap_value
                     )
                     sno_object, created = Sno.objects.get_or_create(sno=sno_value)
                     RequestSttProcessing.objects.create(request_number=request_info_object)
+
 
 
 
@@ -876,10 +976,6 @@ import os
 from urllib.request import urlretrieve
 def sno_detail_edit_save(request):
 
-
-
-
-
     if request.method == 'POST':
 
 
@@ -889,7 +985,6 @@ def sno_detail_edit_save(request):
             base_dir = Path(__file__).resolve().parent.parent
             
             file_path = str(base_dir) + '/static/media/order_drawings/' + pdf_file.name
-            print(file_path)
 
             
             with default_storage.open(file_path, 'wb+') as destination:
@@ -903,12 +998,18 @@ def sno_detail_edit_save(request):
         sno_value = request.POST.get('tableData[0][sNo]', '')
         instance_value = request.POST.get('tableData[0][instance]', '')
 
-        if '_' in instance_value:
-            syc_skc = instance_value.split('_')[1]
+        if instance_value.count('_') ==2:
+            _,syc_skc, so_rep = instance_value.split('_')
+        elif instance_value.count('_') ==1:
+            _,syc_skc = instance_value.split('_')
+            so_rep = None
         else:
             syc_skc = None
+            so_rep = None
+
 
         drawing_file_old = request.POST.get('tableData[0][pdf_path]', '')
+
         iframe_value = request.POST.get('tableData[0][iframe_value]', '')
         pdfFile = request.FILES.get('tableData[0][formData]', '')
 
@@ -926,7 +1027,48 @@ def sno_detail_edit_save(request):
 
             else:  
                 sno_old = Sno.objects.get(sno=sno_old_value)
+                # if syc_skc is not None:
+                #     try:
+    
+                #         my_order =  Order.objects.get(sno =sno_old, type_s = type_s_value, syc_skc = syc_skc, so_rep = so_rep)
+                #         request_info  = RequestInfo.objects.get(order=my_order,request_number = syc_skc, rep_number =so_rep)
+                #         quantity_value =  request_info.quantity
 
+                #     except:
+
+                # my_order =  Order.objects.get(sno =sno_old, type_s = type_s_value)
+
+                my_order =  Order.objects.filter(sno =sno_old, type_s = type_s_value).first()
+
+                request_infos  = RequestInfo.objects.filter(order=my_order)#,request_number = syc_skc, rep_number =so_rep)
+                list_ri = []
+
+                
+                for request_info in request_infos:
+       
+                    request_number_value = request_info.request_number
+                    rep_number_value = request_info.rep_number
+                    quantity_value = request_info.quantity
+                    drawing_type_value  = request_info.drawing_type
+                    inspection_value = request_info.inspection
+                    make_black_value = request_info.make_black
+                    usually_or_urgent_value = request_info.usually_or_urgent
+
+
+                    list_ri.append([request_number_value,rep_number_value,quantity_value,drawing_type_value,inspection_value,make_black_value,usually_or_urgent_value])
+
+                list_pt = []
+                processing_times = ProcessingTime.objects.filter(sno=sno_old)
+                for processing_time in processing_times:
+                    list_pt.append([processing_time.stt, processing_time.stage, processing_time.time_required])
+
+
+                        # quantity_value =  request_info.quantity
+                # else:
+                #     my_order =  Order.objects.get(sno =sno_old, type_s = type_s_value)
+                #     request_info  = RequestInfo.objects.filter(order=my_order)
+                #     quantity_value =  request_info.quantity                
+                # request_infos.delete()
                 sno_old.delete()
                 if not created:
                     sno_object = Sno.objects.create(sno=sno_value)
@@ -944,6 +1086,7 @@ def sno_detail_edit_save(request):
                                 materials=materials_value,
                                 specification=specification_value,
                                 syc_skc = syc_skc,
+                                so_rep = so_rep,
                                 drawing=drawing_file_save
                             )
                         else:
@@ -952,16 +1095,50 @@ def sno_detail_edit_save(request):
                                 type_s=type_s_value,
                                 materials=materials_value,
                                 specification=specification_value,
-                                syc_skc = syc_skc
+                                syc_skc = syc_skc,
+                                so_rep = so_rep,
                                 # drawing=drawing_file
                             )
 
+
+                for ri in list_ri:
+
+                    request_info_object = RequestInfo.objects.create(
+                        order=order_object,
+                        request_number=ri[0],
+                        rep_number = ri[1],
+                        quantity=ri[2],
+                        drawing_type = ri[3],
+                        inspection = ri[4],
+                        make_black = ri[5],
+                        usually_or_urgent = ri[6]
+                    )
+                    RequestSttProcessing.objects.create(request_number=request_info_object)
+
+                    
+                    
+                    for pt in list_pt:
+                        processing_time_object = ProcessingTime.objects.get_or_create(
+                            sno=sno_object,
+                            stt=pt[0],
+                            stage=pt[1],
+                            time_required=pt[2]
+                        )
+
+                        EmployeeProcessing.objects.get_or_create(
+                            request_info=request_info_object,
+                            sno=sno_object,
+                            stt=pt[0],
+                            stage=pt[1],
+                            execution_time=0
+                        )
 
                 for i in range(1, len(request.POST) // 3 -1):
                     if request.POST.get(f'tableData[{i}][stt]', '') != '':
                         stt_value = request.POST.get(f'tableData[{i}][stt]', '')
                         stage_name_value = request.POST.get(f'tableData[{i}][congdoan_name]', '')
                         time_required_value = request.POST.get(f'tableData[{i}][thoigian]', '')
+                        print(stt_value, ' ',stage_name_value ,' ',time_required_value)
 
                         stage_object, created = ProcessingStage.objects.get_or_create(process_name=stage_name_value)
 
@@ -972,14 +1149,13 @@ def sno_detail_edit_save(request):
                             time_required=time_required_value
                         )
 
- 
-                response_data = {
-                    'success': True,
-                    'redirect_url': reverse('sno_detail', kwargs={'sno': instance_value}),
-
-                }
+                redirect_url = reverse('sno_detail', kwargs={'sno': instance_value})
+                
+                response_data = {'success': True, 'redirect_url': redirect_url}
 
                 return JsonResponse(response_data)
+        else:
+            return redirect('home')
 
 
 
@@ -990,31 +1166,33 @@ from django.shortcuts import render
 from django.core.files.storage import default_storage
 from django.templatetags.static import static
 from .models import ExecutionTime, EmployeeProcessing
-def nhanvien(request):
-    materials = Material.objects.all()
-    processingStages = ProcessingStage.objects.all()
-    context = {'materials': materials, 'loop_times': range(1, 100), 'processingStages': processingStages}
-    pdf_path = ''
+# def nhanvien(request):
+#     materials = Material.objects.all()
+#     processingStages = ProcessingStage.objects.all()
+#     context = {'materials': materials, 'loop_times': range(1, 100), 'processingStages': processingStages}
+#     pdf_path = ''
 
-    if request.method == 'POST':
-        if request.FILES.get('pdfFile'):
-            pdf_file = request.FILES['pdfFile']
-            file_path = f'temp/{pdf_file.name}'
+#     if request.method == 'POST':
+#         if request.FILES.get('pdfFile'):
+#             pdf_file = request.FILES['pdfFile']
+#             file_path = f'temp/{pdf_file.name}'
 
-            with default_storage.open(file_path, 'wb') as destination:
-                for chunk in pdf_file.chunks():
-                    destination.write(chunk)
-            file_path = 'media/' + file_path
-            pdf_path = static(file_path)
-    context['pdf_path'] = pdf_path  
+#             with default_storage.open(file_path, 'wb') as destination:
+#                 for chunk in pdf_file.chunks():
+#                     destination.write(chunk)
+#             file_path = 'media/' + file_path
+#             pdf_path = static(file_path)
+#     context['pdf_path'] = pdf_path  
 
-    return render(request, "thietlap.html", context)
+#     return render(request, "thietlap.html", context)
 
 
 
 def thietlap(request):
- 
-    return render(request, "thietlap.html")
+    request_numbers = list(RequestInfo.objects.values_list('request_number', flat=True))
+    request_numbers_json = json.dumps(request_numbers)
+    context = {'request_numbers_json': request_numbers_json}
+    return render(request, "thietlap.html", context)
 
 def giacong(request):
     all_request_info = RequestInfo.objects.all()
@@ -1028,6 +1206,7 @@ def thongtingiacong(request):
 from .models import EmployeeProcessing
 def soyeucau_detail(request, request_number):
     rep_number = 0 
+    c_request_number = request_number
     if "-" in request_number:
         request_and_rep = request_number.split('-')
         request_number = request_and_rep[0].strip()
@@ -1037,11 +1216,15 @@ def soyeucau_detail(request, request_number):
 
 
     request_info = get_object_or_404(RequestInfo, request_number=request_number, rep_number = rep_number)
+    print(request_info)
+    print(rep_number)
+
     
     sno_instance = request_info.order.sno
 
-    sno_instance = request_info.order.sno 
+
     selected_order = Order.objects.filter(sno=sno_instance)
+
     if len(selected_order) >=2:
         materials = ''
         specification = ''
@@ -1069,15 +1252,19 @@ def soyeucau_detail(request, request_number):
 
 
 
+
     
     processing_instances = EmployeeProcessing.objects.filter(request_info=request_info, sno=sno_instance)
+
     execution_times = ExecutionTime.objects.filter(employee_processing__in=processing_instances).order_by('-pk')
+
     list_stage = []
     list_ex = []
     for ex in execution_times:
         if ex.employee_processing.stage not in list_stage:
             list_stage.append(ex.employee_processing.stage)
             list_ex.append(ex)
+
 
     list_pi_st = [pi.stage.process_name for pi in processing_instances]
     list_ls_st = [str(ls) for ls in list_stage]
@@ -1088,6 +1275,14 @@ def soyeucau_detail(request, request_number):
     request_stt_processing_instance = RequestSttProcessing.objects.get(request_number=request_info)
 
     current_stt_value = request_stt_processing_instance.current_stt
+    already_finish = 0 
+    for ex in execution_times:
+        if ex.employee_processing.stt == current_stt_value:
+            already_finish = 1 
+
+            print('đã có nhấn kết thúc')
+
+
 
 
     if request.method == 'POST' and request.POST.get('minutes') is not None:
@@ -1110,7 +1305,10 @@ def soyeucau_detail(request, request_number):
             time_end=time_end,
             duration = minutes
         )
-        response_data = {'success': True}
+        response_data = {
+            'success': True, 
+            'redirect_url': reverse('tuchu_detail', kwargs={'request_number': c_request_number}),
+        }
         return JsonResponse(response_data)
 
 
@@ -1137,7 +1335,8 @@ def soyeucau_detail(request, request_number):
         'processing_instances': processing_instances,
         'list_ex': list_ex,
         'st_remain':st_remain,
-        'current_stt_value':current_stt_value
+        'current_stt_value':current_stt_value,
+        'already_finish':already_finish
     }
 
     return render(request, 'soyeucau_detail.html', context)
@@ -1158,7 +1357,7 @@ def baocaohoatdong(request):
     context = {'eno_choices': eno_choices}
     context['current_user'] = current_user
     context['full_name'] = full_name
-    ca_lam_viec = ['a','b','c','f','g']
+    ca_lam_viec = ['A','B','C','D','E','F']
     context['ca_lam_viec'] = ca_lam_viec
     
     worksdate = WorkDate.objects.filter(user=user_instance, date=timezone.now().date())
@@ -1185,6 +1384,7 @@ def save_baocaohoatdong(request):
             current_user = rows_data[0].get('current_user', '')
             user = User.objects.get(username=current_user)
             shift = rows_data[0].get('selectedCa', '')
+
             worksdate = WorkDate.objects.filter(user=user, date=timezone.now().date())
             if worksdate.exists():
                 worksdate.delete()
@@ -1365,6 +1565,12 @@ def thietlap_detail(request):
         quy_cach_1_bit = request.POST.get('selected_specification')
         have_input_pdf = request.POST.get('have_input_pdf')
 
+        loai_ban_ve = request.POST.get('loai_ban_ve')
+        kiem_tra = request.POST.get('kiem_tra')
+        lam_den = request.POST.get('lam_den')
+        thuong_gap = request.POST.get('thuong_gap')
+
+
         if loai_s_chuan == 'Có S chuẩn':
             if vat_lieu is None and quy_cach_1_bit is None:
                 sno_object = get_object_or_404(Sno, sno=s_no)
@@ -1454,7 +1660,9 @@ def thietlap_detail(request):
                     messages.warning(request, f'Số yêu cầu {so_yeu_cau} đã tồn tại.')
 
                 else:
-                    request_info = RequestInfo.objects.create(order=order, request_number=so_yeu_cau, rep_number=so_rep, quantity=so_luong)
+                    request_info = RequestInfo.objects.create(
+                        order=order, request_number=so_yeu_cau, rep_number=so_rep, quantity=so_luong,
+                        drawing_type =loai_ban_ve,inspection =kiem_tra, make_black=lam_den, usually_or_urgent=thuong_gap)
                     RequestSttProcessing.objects.create(request_number=request_info)
 
 
@@ -1483,6 +1691,8 @@ def thietlap_detail(request):
 
             processing_stages = ProcessingStage.objects.all()
 
+
+
             context = {'s_no': s_no,'so_yeu_cau': so_yeu_cau, 'so_luong': so_luong,'so_rep':so_rep, 'loai_s_chuan': loai_s_chuan,'materials': materials}
             # return render(request, "thietlap_text_material.html", context)
 
@@ -1498,10 +1708,25 @@ def thietlap_detail(request):
                 # vat_lieu = request.POST.get('selected_material')
                 quy_cach_1_bit = request.POST.get('selected_specification')
                 # context = {'s_no': s_no,'so_yeu_cau': so_yeu_cau, 'so_luong': so_luong, 'loai_s_chuan': loai_s_chuan,'vat_lieu': vat_lieu}
+
                 context = {'s_no': s_no,'so_yeu_cau': so_yeu_cau, 'so_luong': so_luong,'so_rep':so_rep, 'loai_s_chuan': loai_s_chuan,'materials': materials,'processing_stages':processing_stages}
+                dict_material_stages = {'TRUC': ['abcd', 'P3.17X95', 'P2X62', 'P2.3X77'], 'SUS': ['T2X1200X2000', 'T1.5X800X1200', 'T3X800X1200', 'T1.5X1200X2000', 'T2X800X1200', 'T1X800X1200', 'T1X1200X2000', 'P25X1000', 'T25X300X500', 
+                    'T12X300X500', 'T1.2X800X1200', 'T20X300X500', 'P85X500', 'P80X500', 'P30X1000', 'P22X1000', 'T32X300X500', 'T22X300X500', 'P55X500', 'P45X500', 'T4X300X500', 'P90X500', 'P16X1000', 'P75X500', 'P28X1000', 'P12X1000', 'P14X1000', 'P20X1000', 'P32X1000', 'T16X300X500', 'T0.7X800X1200', 'T0.6X800X1200', 'P101.6XP93.6X10', 'P50X500', 'P7X1000', 'T0.3X800X1200', 'T0.4X800X1200', 'P10X1000', 'T0.2X800X1200', 'T0.1X800X1200', 'P8X1000', 'P6X1000', 'T0.5X800X1200', 'T5X300X500', 'P5X1000', 'P1.8X160', 'T6X300X500', 'T40X300X500', 'T10X300X500', 'T8X300X500'], 'SKD11': ['T130X305X500', 'T85X305X500', 'T38X300X500', 'T32X300X500', 'T22X300X500', 'P132X500', 'P75X500', 'P90X500', 'P95X500', 'P110X500', 'P20X1000', 'T8X300X500', 'T70X300X500', 'P55X500', 'P25X1000', 'T5X205X1000', 'P120X500', 
+                    'P70X500', 'T4X205X1000', 'P42X500', 'T50X300X500', 'P85X500', 'P12X1000', 'T25X300X500', 'P7X1000', 'P9X1000', 'P8X1000', 'P22X1000', 'P5X1000', 'T3X205X1000', 'T6X205X1000', 'P4X1000', 'P10X1000', 'P3X1000', 'P6X1000', 'P16X1000', 'P60X500', 'P50X500', 'P80X500', 'T20X300X500', 'P30X1000', 'P36X500', 'P65X500', 'T16X300X500', 'T13X300X500'], 'S45C': ['P50X500', 'T14X300X500', 'T60X300X500', 
+                    'T22X300X500', 'T65X300X500', 'P150X500', 'T55X300X500', 'P95X500', 'P25X1000', 'P36X500', 'P90X500', 'P22X1000', 'T2X300X500', 'P60X500', 'P115X500', 'P70X500', 'T1X300X500', 'P55X500', 'P80X500', 
+                    'T3X300X500', 'T46X300X500', 'P100X500', 'P18X1000', 'P28X1000', 'P35X500', 'P32X1000', 'P14X1000', 'P75X500', 'P42X500', 'P12X1000', 'P6X1000', 'T10 RETURN', 'P16X1000', 'P27X1000', 'P130X500', 'P13X1000', 'P10X1000', 'P46X500', 'T50X300X500', 'T28X300X500', 'T32X300X500', 'T26X300X500', 'P40X500', 'P30X1000', 'P85X500', 'T36X300X500', 'T40X300X500', 'P65X500', 'P20X1000', 'T30X300X500', 'T5X300X500', 'T16X300X500', 'T20X300X500', 'T12X300X500', 'T8X300X500', 'T10X300X500'], 'A606P': ['T12X500X500', 'T10X500X500', 'T8X500X500'], 'G04': ['T53X300X500', 'T60X300X500', 'P120X500', 'P85X500', 'T13X300X500', 'P50X500', 'T16X300X500', 'P46X500', 'P70X500', 'T25X300X500', 'P55X500', 'P19X1000', 'T19X300X500', 'P110X500', 'T32X300X500', 'P80X500', 'P32X500', 'P28X1000', 'P60X500', 'P16X1000', 'P36X500', 'P75X500', 'P65X500', 'P42X500', 'P13X1000', 'P22X1000', 'P90X500'], 'A6061': ['T10X800X1200', 'T15X500X500', 'T20X500X500', 'P30X1000', 'T6X500X500', 'P25X1000', 'T12X500X500', 'T40X300X500', 'T16X300X500', 'T10X500X500', 'T60X300X500', 'T25X300X500', 'P100X500', 'T3X500X500', 'P80X500', 'T50X300X500', 'T30X300X500', 'P65X500', 'P15X1000', 'P20X1000', 'P75X500', 'P55X500', 'P90X500', 'P40X500', 'P26X1000', 'T8X500X500', 'P130X500', 'P10X1000', 'T5X500X500'], 'C1720': ['P21X1000', 'P40X500', 'T25X300X500', 'T10X300X500', 'P15X1000 MASSKI', 'P15X1000 CHAU K', 'P25X1000', 'P22X1000', 'T16X300X500', 'P30X1000', 'P10X1000', 'P20X1000', 'P12X1000', 'T0.6X200X1000', 'P55X500', 'P1.2X1000', 'P6X1000', 'P1X1000', 'T20X300X500', 'P7X1000', 'P5X1000', 'P0.8X2000', 'P16X1000', 'P4X1000', 'T0.5X200X300', 'P8X1000', 'T0.7X200X500', 'T0.8X200X500', 'P46X500'], 'SK-3': ['T50X300X500', 'T32X300X500', 'T38X300X500', 'T25X305X500', 'P75X500', 'P100X500', 'T13X300X500', 'P90X500', 'T25X300X500', 'T22X300X500', 'P42X500', 'P65X500', 'P25X1000', 'P55X500', 'P60X500', 'P28X1000', 'P85X500', 'P32X500', 'P36X500', 'P22X1000', 'P30X1000', 'P19X1000', 'P6X1000', 'P38X500', 'P16X1000', 'T16X300X500', 'P50X500'], 'NAK55': ['T50X300X500', 'T70X300X500', 'T43X300X500', 'P80X500', 'P110X500', 'T38X300X500', 'T38X305X500', 'T16X305X500', 'P22X1000', 'T19X300X500', 'P75X500', 'P65X500', 'T32X300X500', 'P46X500', 'T22X300X500', 'T27X300X500', 'P19X1000', 'P42X500', 'P25X1000', 'P55X500', 'P16X1000', 'P13X1000', 'T13X300X500', 'P32X500'], 'BTP': ['S165842', 'S419961', 'S469311', 'S769867', 'S419966', 'EF05 10.5X20.5X', 'EF10 10.5X20.5X', 'REA25 10.5X20.5', 'REA35 10.5X20.5', 'RF06 10.5X20.5X', 'RF10 10.5X20.5X', 'S723723', 'S469900', 'R124607', 'R015901(EM10)', 'S901675', 'S842750', 'S783754', 'S820358', 'S914640', 'S831739', 'S083733', 'S896300', 'S620526', 'S163761', 'S159054', 'S823481', 'S733114', 'S913362', 'S083508', 'S083236', 'S797266', 'R105776', 'S056252', 'S901737', 'R058155', 'S766567', 'S056253', 'S898834', 'R028175', 'R028214', 'R032425', 'S001846', 'S156666', 'S902329', 'S933608', 'S941278', 'R056125', 'R110492', 'R337024', 'S163146', 'S935131', 'R058336', 'R069615', 'S212034', 'S251058', 'S262809', 'S856536', 'S770260', 'R069741', 'S083499', 'S903203', 'S161392', 'S903268', 'S087480', 'EF20 10.5X20.5X', 'R417935', 'S875030', 'R027917', 'R027962', 'R028119', 'R029029', 'R029060', 'R029061', 'R029085', 'R029159', 'R029321', 'R029340', 'R029403', 'R029475', 'R054992', 'R058132', 'R063145', 'R078247', 'R104394', 'R104406', 'R104415', 'R116090', 'R116173', 'R116787', 'R116789', 'R333469', 'R359400', 'R366819', 'S073929', 'S073930', 'S073937', 'S083695', 'S157020', 'S160710', 'S163763', 'S206235', 'S439279', 'S764009', 'S764013', 'S782960', 'S791872', 'S792792', 'S796625', 'S831752', 'S856488', 'S868339', 'S870521', 'S896299', 'S919916', 'S919918', 'S927142', 'S934912', 'S946965', 'S087724', 'S883064', 'S156670', 'R057995', 'R058015', 'R103504', 'R105763', 'R105773', 'S083735', 'S083740', 'S210894', 'S245251', 'S245335', 'S439169', 'S648245', 'S821855', 'S856500', 'S856518', 'S870520', 'S875947', 'S877340', 'S934868', 'R058275', 'R069123', 'S212037', 'S297473', 'S434416', 'S777347', 'S856556', 'S946963', 'S799056', 'PRD9N T10.5X20.', 'R007162-->R0367', 'R028959', 'R028973', 'R063055', 'R063140', 'R099763', 'R105768', 'R116537', 'R116539', 'R174874', 'R302351', 'R408125', 'R408127', 'R408147', 'R408519', 'R408524', 'R408525', 'R408546', 'R408549', 'R408557', 'R408558', 'R408691', 'R408697', 'R417887', 'R417900', 'R417903', 'R417904', 'R417920', 'R417937', 'R417952', 'R417961', 'R417973', 'R417979', 'R417988', 'R417989', 'R476103', 'R492813', 'R492859', 'S027890', 'S065486-->S4413', 'S073947', 'S723802<>S74221', 'S787211', 'S868326-S902329', 'S868361-->R3334', 'S870525', 'S885188', 'S899373', 'S916195', 'S919927', 'S934709', 'S935147', 'S948801', 'R003082', 'R008180', 'R008899', 'R009247', 'R027932', 'R027937', 'R027939', 'R027968', 'R027985', 'R027996', 'R028041', 'R028042', 'R028139', 'R028222', 'R029004', 'R029037', 'R029038', 'R029073', 'R029086', 'R029111', 'R030608', 'R036772', 'R058134', 'R058136', 'R058137', 'R058139', 'R058140', 'R058142', 'R058274', 'R058331', 'R063017', 'R063131', 'R063143', 'R066503', 'R071369', 'R071371', 'R095386', 'R101175', 'R101449', 'R103506', 'R103514', 'R103537', 'R104421', 'R104982', 'R105679', 'R105683', 'R105684', 'R105688', 'R105696', 'R105755', 'R105760', 'R105777', 'R106196', 'R116221', 'R116310', 'R116335', 'R116338', 'R116340', 'R152939', 'R171294', 'R181237', 'R181238', 'R181844', 'R333470', 'R360106', 'R360136', 'R366240', 'R366818', 'R369892', 'S005503', 'S019604', 'S027157', 'S028871', 'S031825', 'S033535', 'S034306', 'S069141', 'S073954', 'S077634', 'S083239', 'S083539', 'S083734', 'S083752', 'S101041', 'S101044', 'S101052', 'S101167', 'S154368', 'S156672', 'S156673', 'S157018', 'S157019', 'S157542', 'S157543', 'S157558', 'S158110', 'S163764', 'S163950', 'S206214', 'S206840', 'S209822', 'S210883', 'S245197', 'S422181', 'S432699', 'S434206', 'S439416', 'S441385', 'S473896', 'S473899', 'S609444', 'S628464', 'S648308', 'S759798', 'S774064', 'S780381', 'S780382', 'S785191', 'S785194', 'S786092', 'S786128', 'S788328', 'S790183', 'S790195', 'S792796', 'S796621', 'S796822', 'S796843', 'S797000', 'S831753', 'S837261', 'S850500', 'S857719', 'S861819', 'S867505', 'S870534', 'S870614', 'S870616', 'S883091', 'S883721', 'S883729', 'S895721', 'S895722', 'S903267', 'S911415', 'S911429', 'S911519', 'S911521', 'S933430', 'S933610', 'S935777', 'S936006', 'S936007', 'S941309', 'S945611', 'S945617', 'S946962', 'R015644', 'R029199', 'R029239', 'R058144', 'R058153', 'R058154', 'R103957', 'R104914', 'R105709', 'R105759', 'R105767', 'R116521', 'S027933', 'S030920', 'S157557', 'S163150', 'S455883', 'S842748', 'S870447', 'S895726', 'S903204', 'S941285', 'S029283', 'R049827', 'DKIF362A-00-1-0', 'S932877', 'S932882', 
+                    'S921105', 'S617456', 'S411679', 'S443804', 'R058145', 'R066496', 'S934990', 'R007317', 'R027959', 'R028140', 'R028171', 'R053260', 'R058346', 'R066493', 'R066494', 'R066501', 'R066502', 'R066504', 
+                    'R115892', 'R359402', 'R360105', 'R417918', 'S648316', 'S836079', 'S857331', 'S927141', 'S935146', 'R029167', 'R103539', 'R116776', 'R129856', 'S770313', 'S833627', 'R000569', 'S762923', 'R104420', 
+                    'S034904(EM10)', 'R448186', 'S411658', 'S797928', 'S875016', 'S056860(EM10)'], 'POM': ['T10X500X500', 'T40X300X500', 'T6X500X1000', 'T12X500X500', 'T15X500X500', 'T5X500X1000', 'P130X500', 'T30X300X500', 'T50X300X500', 'T20X500X500', 'P30X1000', 'P90X500', 'P15X1000', 'P70X500', 'P25X1000', 'T35X300X500', 'P40X1000', 'T25X500X500', 'P45X500', 'P10X1000', 'P12.5X1000', 'P50X500', 'P8X1000', 'P20X1000'], 'SGTF': ['T50X305X500'], 'ACR-T': ['T15X1220X2440', 'T8X1220X2440', 'T3X1220X2440', 'T5X1220X2440', 'T10X1220X2440', 'T2X1220X2440', 'P40XP36X1000', 'T10X1220X2440BL'], 'C1100': ['T30X300X500', 'T40X300X500', 'T15X300X500', 'T20X300X500', 'P14X1000', 'P30X1000', 'P25X1000', 'P18X1000', 'P12X1000', 'T0.1X300X500', 'P8X1000', 'P10X1000', 'P3X2000', 'P6X1000', 'P20X1000', 'T10X300X500', 'P40X500', 'P16X1000'], 'SKS3': ['P55X500', 'P85X500', 'P120X500', 'P75X500', 'P95X500', 'P90X500', 'T4X305X1000', 'P70X500', 'P80X500', 'T60X300X500', 'T38X305X500', 'P42X500', 'P60X500', 'P25X1000', 'P46X500', 'P65X500', 'T5X205X1000', 'T6X205X1000', 'P22X1000', 'P36X500', 'P30X1000', 'P16X1000', 'T50X305X500', 'T8X305X1000', 'P50X500', 'P32X500', 'T16X305X500', 'T10X305X500', 'T19X305X500', 'T130X305X500', 'T32X305X500', 'T25X305X500', 'T13X305X500'], 'A7075': ['T70X300X500'], 'BS': ['T40X300X500', 'P20X1000', 'P16X1000', 'P50X500', 'T15X300X500', 'T20X300X500', 'T8X300X500', 'T45X300X500', 'P30X1000', 'T10X300X500', 'P75X500', 'T12X300X500', 'P55X500', 'P40X500', 'P85X500', 'P25X1000', 'T2X300X500', 'P8X1000', 'P6X1000', 'P10X1000', 'P4X1000'], 'CU-W': ['P20X200', 'P25X200', 'P45X200', 'P70X200', 'P35X200', 'P18X200', 'P14X200', 'P16X200', 'T15X50X100', 'P30X200', 'P12X200', 'P80X200', 'P6X200', 'P8X200', 'P10X200', 'P4X200', 'P60X200', 'P5X200', 'P2X150', 'P2.5X200', 'P3X200', 'T20X50X100', 'T25X50X100'], 'SLD': ['T32X320X500', 'T27X180X320'], 'SKH51': ['T30X200X300', 'P6X2000', 'P10X2000', 'P4.25X2000', 'P5X150', 'T20X50X100', 'P5.3X2000', 'P8X1000', 'P3.5X2000', 'P7.3X2000', 'P4X150', 'P3.4X2000', 'P3.1X2000', 'P3.2X2000', 'P2.5X2000', 'P2X2000', 'P2.4X2000', 'P1.8X2000', 'P2.9X1000', 'P3.2X200', 'P1.6X2000', 'P2.1X2000', 'P3.04X100', 'P3X2000', 'P6.3X2000'], 'MO': ['P6X200', 'P5X500', 'P5X196', 'P6X500', 'P3X160', 'P6X50'], 'C5191': ['P70X500', 'T30X200X200', 'T20X200X300', 'T5X180X1200', 'T15X200X300', 'P20X500', 'P0.8X2000', 'P1X2000'], 'ANP79': ['T10X300X500', 'T20X300X500', 'T11X300X500', 'T60X300X500', 'T15X300X500'], 'SGTR': ['P70X500'], 'SCM44': ['T55X300X500'], 'BAKEL': ['T6X800X1200', 'T25X800X1200', 'T20X800X1200', 'T8X800X1200', 'T50X300X500', 'T15X800X1200', 'P90X500', 'T10X800X1200', 'T35X300X500', 'P35X500', 'P45X500', 'P40X500', 'P60X500', 'P50X500', 'T30X300X500', 'P5X1000', 'P32X500', 'P25X1000', 'P20X1000', 'P16X1000', 
+                    'T5X800X1200'], 'YWP': ['P5X200', 'P2X200', 'P3X200', 'T3.6X26X100', 'T6X26X100'], 'SLDR': ['P95X500', 'P55X500', 'P65X500'], 'SKD61': ['T13X300X500', 'T25X190X210', 'T19X190X210'], 'ASP23': ['P90X500', 'T43X210X300', 'P60X500', 'P14X500', 'P20X500', 'P80X500', 'T10X150X200'], 'FRP': ['T6X500X500', 'T8X300X300', 'T5X500X500', 'T3X300X500'], 'ELMAX': ['T32X200X500'], 'POMBL': ['T25X500X1000', 'T15X500X1000', 'T10X300X1000', 'T5X300X1000'], 'SKH9': ['T28X310X500', 'P6X1000'], 'SUYB1': ['P20X1000', 'P60X500'], 'SUS42': ['T25X300X300', 'T10X300X300', 'P14X1000'], 'SKS2': ['T3X305X1000', 'P8X1000', 'P13X1000', 'P7X1000', 'P9X1000', 'P12X1000', 'P3X1000', 'P4X1000', 'P5X1000', 'P6X1000', 'P10X1000', 'P20X1000', 'T6X205X1000'], 'RIGOR': ['T18X166X500', 'T22X166X500', 'T22X210X500', 'P15X1000', 'T32X210X500'], 'HPM1': ['P50X1000', 'P42X1000', 'T23X300X500'], 'WOOD': ['T5X245X245LAYTT', 'T6X245X245LAYTT'], 'ASP60': ['T23X210X300'], 'PEEK': ['P28X1000', 'P25X1000', 'T10X200X300', 'P50X500', 'P40X1000', 'T16X200X300', 'T20X150X250', 'T8X200X300', 'P30X1000'], 'SCM43': ['P45X500', 'P6X1250'], 'SLDMG': ['T10X150X200', 'T26X305X500', 'T23X300X500'], 'SUJ-2': ['P40X500', 'P12X1000', 'P65X500', 'P38X500', 'P32X500', 'P4X1000', 'P16X1000', 'P13X1000', 'P10X1000', 'P22X1000', 'P32X1000'], 'PANE': ['T0.7X102X1000', 'T0.9X102X1000', 'T0.2X102X1000', 'T0.6X102X1000', 'T0.8X102X1000', 
+                    'T0.4X102X1000', 'T0.3X102X1000', 'T1.0X102X1000', 'T0.5X102X1000', 'T0.1X102X1000', 'T1.2X102X1000'], 'WCD30': ['T40X50X120', 'T26X50X120', 'T30X60X120', 'T24X50X100', 'T23X80X100', 'T13X65X130', 'T16X60X120', 'T6X50X100', 'T27X65X130', 'T25X50X100', 'P28X100', 'P30X100', 'T20X50X100', 'T9X65X100', 'P18X100', 'T16X50X100', 'P25X100', 'T22X50X100', 'P10X70', 'T16X80X100', 'P12X65', 'T9X50X100', 'P4X90', 'P7X80', 'P10X65', 'P5X60', 'P4X60', 'P4X50', 'P9X70', 'P5X100', 'P20X100', 'T23X50X120', 'P3.1X50', 'P12X100', 'P8X70', 'P3.1X65', 'P30X60', 'P22X100', 'P14X100', 'P7X70', 'T26X33X120', 
+                    'T14X65X130', 'P7X55', 'T30X50X100', 'P6X70', 'P32X100', 'P26X100', 'T7X50X100', 'T18X50X100', 'T12X65X105'], 'WCD40': ['T23X70X75', 'T23X55X120', 'T22X55X120', 'T22X50X120', 'T11X70X100', 'P22X60', 'P30X75', 'P19X65', 'T20X50X100', 'P17X65', 'P4X65', 'P12X40', 'P12X60', 'P10X60', 'P5X65', 'P6X80', 'P7X50', 'P3X50', 'P6X60'], 'STAVA': ['T23X200X200'], 'C3604': ['P7X1000', 'T2X300X500', 'P10X1000', 'P13X1000', 'P8X1000'], 'SEIDO': ['P50X500', 'T10X210X300', 'P30X500'], 'VANAD': ['T10X150X200'], 'WCD25': ['T26X50X100', 'P28X100', 'P32X100', 'T22X50X100', 'P15X100', 'T9X50X100', 'P18X100', 
+                    'P9X60', 'P7X60', 'P8X60', 'P10X60', 'P22X120'], 'WCV50': ['T9X50X100', 'T12X55X100', 'T6X50X100', 'T7X55X120', 'P9X70', 'T11X55X120', 'T10X55X120'], 'ASP30': ['T27X200X300'], 'MC901': ['T45X300X500'], 'WKD40': ['T16X50X100', 'T20X50X100', 'T7X50X100', 'T8X50X100', 'T9X50X100', 'T5X50X100', 'P5X60', 'P6X70', 'P10X60', 'P7X70'], 'ORESU': ['T11X105X1000', 'T8X105X1000', 'T13X105X1000', 'P7X500'], 'TEFLO': ['P8X1000', 'T10X300X500', 'P10X1000', 'P12X1000'], 'PHIP': ['P20X1000', 'T10X1000X1200', 'P3X1000', 'P16X1000'], 'SUS44': ['P22X500', 'T25X100X200'], 'CRCU': ['P8X1000', 'P6X1000', 'P5X1000'], 'WCD20': ['T20X50X100', 'T24X60X120', 'P9X100', 'T22X60X120', 'P20X60', 'P11X80', 'P21X60', 'P22X60', 'T9X60X120', 'T11X60X120', 'P6X70'], 'OILES': ['P36SX36#600', 'P36MX26#600'], 'PB2': ['P13X1000'], 'SUM24': ['P7X1000'], 'WCD50': ['T22X56X62', 'P14X75', 'P16X100', 'P24X50', 'P23X60', 'P10X70', 'P12X70', 'P8X65'], 'SNC': ['P25X500'], 'URETA': ['P20X500', 'P15X500', 'P60X500', 'P35X500', 'P50X500', 'P22X500', 'T3X200X300', 'P26X500', 'T1.5X200X300', 'T0.5X200X300', 'P10X500', 'T2X200X300', 'T1X200X300', 'T5X200X300', 'T15X200X300', 'P4X500', 'P6X500', 'P45X500'], 'NA30': ['T11X64X100', 'P36X100', 'T8X50X130', 'P7X50'], 'AION': ['T10X310X500'], 'CU': ['O5XO10X500', 'PBC-2C(120X60X4', 'PBC-2C(260X200X'], 'PPS': ['T10X200X200'], 'PRD9N': ['T12X60X100', 'T6X60X100', 'P13X70', 'P5X60'], 'EM10': ['T16.5X20.5X30.5'], 'C5210': ['T0.5X300X500', 'T0.3X300X500', 'T0.1X300X500'], 'AGW': ['P5X200', 'P6X200'], 'MCZ': ['P2.5X1000'], 'SSROD': ['P3.8X2000'], 'SK': ['TFG-0.03M1', 'TFG-0.08M1'], 'NAK80': ['P6*1000'], 'HPM75': ['P65X500'], 'XW10': ['T32X300X500']}
+                context['dict_material_stages'] = dict_material_stages
+                
                 if request.FILES.get('pdfFile'):
                     pdf_file = request.FILES['pdfFile']
-                    print(pdf_file)
+
                     file_path = f'temp/{pdf_file.name}'
 
                     # Save the file using default_storage
@@ -1509,7 +1734,7 @@ def thietlap_detail(request):
                         for chunk in pdf_file.chunks():
                             destination.write(chunk)
                     file_path = 'media/' + file_path
-                    print(file_path)
+    
                     pdf_path = static(file_path)
                     context['pdf_path'] = pdf_path  
                     return render(request, "thietlap_all.html", context)
@@ -1570,7 +1795,7 @@ def tuchu_detail(request,request_number):
     #             # Inspection.objects.create(stage = stage_tuchu, inspect = kt, max_value = max, min_value = min,ok_ng = okng, stt= index+1)
     #         Inspection.objects.bulk_create(inspections)
     #     context = {'request_info': 'request_info'}
-    #     print(data)
+
 
     #     return render(request, 'tuchu_detail.html', context)
 
@@ -1626,7 +1851,7 @@ def tuchu_detail(request,request_number):
         # context['max_values'] = max_values
         # context['min_values'] = min_values
         # context['okngs'] = okngs
-
+    print(request_info.order.drawing)
     return render(request, 'tuchu_detail2.html', context)
 
 
@@ -1674,7 +1899,8 @@ def save_kiemtratuchu(request):
                     stage_tuchu = StageTuchu.objects.create(requirement=request_info, StageTuchu=cd, employee=user, stt=index + 1)
                     Inspection.objects.filter(stage=stage_tuchu).delete()
                 else:
-                    stage_tuchu = StageTuchu.objects.get(requirement=request_info, StageTuchu=cd, employee=user, stt=index + 1)
+
+                    stage_tuchu,_ = StageTuchu.objects.get_or_create(requirement=request_info, StageTuchu=cd, employee=user, stt=index + 1)
 
                 inspections.append(Inspection(stage=stage_tuchu, inspect=kt, max_value=max_val, min_value=min_val, ok_ng=ok_ng, stt=index + 1))
 
@@ -1712,6 +1938,8 @@ def get_file_drawing(request):
     ]
 
     Order.objects.bulk_update(updated_orders, ['drawing'])
+
+
 
 
 # @require_POST

@@ -33,7 +33,7 @@
                     <label hidden class="col-sm-16 col-form-label" id="snoOld">{{ sno_instance }}</label>
 
                     <input type="text" class="form-control" name="sno_instance" value="{{ sno_instance }}" oninput="toUpperCase(this)">
-                    <input type="hidden" name="instance" value="{{ instance }}">
+                    <input type="hidden" name="instance_tail" value="{{ instance_tail }}">
 
                 </div>
             </div>
@@ -543,8 +543,10 @@
         var snoInstanceInput = document.querySelector('input[name="sno_instance"]');
         var snoInstanceValue = snoInstanceInput.value;
 
-        var instanceInput = document.querySelector('input[name="instance"]');
-        var instanceValue = instanceInput.value;
+        var instanceTailInput = document.querySelector('input[name="instance_tail"]');
+        var instanceTailValue = instanceTailInput.value;
+
+        var instanceValue = snoInstanceValue + instanceTailValue
 
         var pdfPathInput = document.querySelector('input[name="pdf_path"]');
         var pdfPathValue = pdfPathInput.value;
@@ -630,7 +632,7 @@
 
                 console.log("Server response:", response);
                 if (response.success) {
-                    // Thực hiện chuyển hướng
+
                     window.location.href = response.redirect_url;
                 }
                 else {

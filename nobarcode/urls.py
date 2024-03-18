@@ -7,7 +7,7 @@ from django.conf.urls.static import static
 from .views import pdf_view,thietlap,post_order,order_detail,upload_excel,sno_list,thietlap_detail,thietlap_sno,request_list,delete_request
 from .views import giacong,soyeucau_detail, giacong_detail, thongtingiacong,sno_detail_edit_save,sno_kochuan_list,kiemtratuchu,tuchu_detail
 from .views import save_kiemtratuchu, baocaohoatdong, save_baocaohoatdong,get_file_drawing
-from .views import nhanvien,post_test,a,b
+from .views import post_test,a,b
 
 from .views import ClearOrderView,ClearOrderResultView,ClearSnoView,ClearSnoResultView,ClearProcessingTimeView,ClearProcessingTimeResultView
 from .views import SnoDetailView,SnoDetailView2,RequestDetailView,EditRequestDetailView,SnoEditDetailView
@@ -22,7 +22,7 @@ urlpatterns = [
 
     path('thietlap/', thietlap, name='thietlap'),
     path('thietlap_sno/', thietlap_sno, name='thietlap_sno'),
-    path('nhanvien/', nhanvien, name='nhanvien'),
+    # path('nhanvien/', nhanvien, name='nhanvien'),
     path('thietlap_detail/', thietlap_detail, name='thietlap_detail'),
 
     path('post_order/', post_order, name='post_order'),
@@ -54,7 +54,7 @@ urlpatterns = [
 
     path('sno/<str:sno>/', SnoDetailView.as_view(), name='sno_detail'),
     path('sno/<str:sno>/edit', SnoEditDetailView.as_view(), name='sno_detail_edit'),
-   path('sno_detail_edit_save/', sno_detail_edit_save, name='sno_detail_edit_save'),
+    path('sno_detail_edit_save/', sno_detail_edit_save, name='sno_detail_edit_save'),
    
     # path('sno/<str:sno>/<str:material>/', SnoDetailView2.as_view(), name='sno_detail2'),
 
@@ -79,7 +79,7 @@ urlpatterns = [
     path('kiemtratuchu/<str:request_number>/', tuchu_detail, name='tuchu_detail'),
     path('save_kiemtratuchu/', save_kiemtratuchu, name='save_kiemtratuchu'),
 
-    path('get_file_drawing/', get_file_drawing, name='save_kiemtratuchu'),
+    # path('get_file_drawing/', get_file_drawing, name='save_kiemtratuchu'),
 
 
 ]

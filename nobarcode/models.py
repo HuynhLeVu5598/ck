@@ -46,6 +46,9 @@ class Order(models.Model):
     v1 = models.CharField(max_length=255, verbose_name='V1', null=True, blank=True)
     v2 = models.CharField(max_length=255, verbose_name='V2', null=True, blank=True)
     syc_skc = models.CharField(max_length=255, verbose_name='Số yêu cầu', null=True, blank=True)
+    so_rep = models.IntegerField(verbose_name='Số rep', null=True, blank=True)
+    # so_luong = models.IntegerField(verbose_name='Số lượng', null=True, blank=True)
+
     drawing = models.FileField(upload_to='order_drawings/', verbose_name='Bản vẽ PDF', blank=True, null=True)
 
 
@@ -62,6 +65,11 @@ class RequestInfo(models.Model):
     request_number = models.CharField(max_length=255, verbose_name='Số yêu cầu')
     rep_number = models.IntegerField(verbose_name='Số rep')
     quantity = models.IntegerField(verbose_name='Số lượng', null=True, blank=True)
+    drawing_type = models.CharField(max_length=255, verbose_name='Loại bản vẽ', null=True, blank=True)
+    inspection = models.CharField(max_length=255, verbose_name='Kiểm tra', null=True, blank=True)
+    make_black = models.CharField(max_length=255, verbose_name='Làm đen', null=True, blank=True)
+    usually_or_urgent = models.CharField(max_length=255, verbose_name='Bản vẽ thường gấp', null=True, blank=True)
+
 
     def __str__(self):
         return f'{self.request_number} - {self.rep_number}'

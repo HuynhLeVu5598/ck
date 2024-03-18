@@ -32,7 +32,7 @@
             <div class="form-group row">
               <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
               <div class="col-sm-8">
-                    <label class="col-sm-16 col-form-label">{{ sno_instance }}</label>
+                    <label class="col-sm-16 col-form-label">{{ instance }}</label>
               </div>
             </div>
           
@@ -89,7 +89,7 @@
             </div>
 
             <div class="edit-button-container">
-                <a  href="{% url 'sno_detail_edit' sno_instance %}" class="btn btn-primary">Chỉnh sửa</a>
+                <a  href="{% url 'sno_detail_edit' instance %}" class="btn btn-primary">Chỉnh sửa</a>
             </div>
 
           <script>

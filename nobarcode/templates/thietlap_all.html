@@ -15,7 +15,6 @@
 
                   <!-- Dropdown 2 -->
 
-
                   <div class="form-group row">
                     <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
                     <label id="soYeuCauLabel" class="col-sm-4 col-form-label">{{ so_yeu_cau }}</label>
@@ -52,6 +51,71 @@
 
 
 
+                <style>
+                  .my-custom-select {
+                      display: block;
+                      width: 95%;
+                      padding: .375rem .75rem;
+                      font-size: 0.9rem;
+                      line-height: 1.5;
+                      color: #495057;
+                      background-color: #fff;
+                      background-clip: padding-box;
+                      border: 1px solid #ced4da;
+                      border-radius: .25rem;
+                      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+                  }
+                </style>
+
+
+                <div class="form-group row">
+                  <label for="loaiBanVe" class="col-sm-4 col-form-label">Loại bản vẽ</label>
+                  <div class="col-sm-8">
+                      <select class="my-custom-select" id="loaiBanVe" name="loai_ban_ve">
+                          <option value="" selected></option>
+                          <option value="Chính thức">Bản vẽ chính thức</option>
+                          <option value="Thử nghiệm">Bản vẽ thử nghiệm</option>
+                      </select>
+                  </div>
+              </div>
+              
+              <div class="form-group row">
+                  <label for="kiemTra" class="col-sm-4 col-form-label">Kiểm tra</label>
+                  <div class="col-sm-8">
+                      <select class="my-custom-select" id="kiemTra" name="kiem_tra">
+                          <option value="" selected></option>
+                          <option value="Có">Có</option>
+                          <option value="Không">Không</option>
+                      </select>
+                  </div>
+              </div>
+              
+              <div class="form-group row">
+                  <label for="lamDen" class="col-sm-4 col-form-label">Làm đen</label>
+                  <div class="col-sm-8">
+                      <select class="my-custom-select" id="lamDen" name="lam_den">
+                          <option value="" selected></option>
+                          <option value="Có">Có</option>
+                          <option value="Không">Không</option>
+                      </select>
+                  </div>
+              </div>
+              
+            
+            <div class="form-group row">
+                <label for="thuongGap" class="col-sm-4 col-form-label">Bản vẽ</label>
+                <div class="col-sm-8">
+                    <select class="my-custom-select" id="thuongGap" name="thuong_gap">
+                        <option value="" selected></option>
+                        <option value="Thường">Thường</option>
+                        <option value="Gấp">Gấp</option>
+                    </select>
+                </div>
+            </div>
+            
+            
+
+            
                 <div class="form-group row grid-margin stretch-card">
                   <div class="card">
                     <div class="card-body">
@@ -159,6 +223,38 @@ function collectTableData() {
     var sNoValue = sNoLabelElement.textContent || sNoLabelElement.innerText;
 
 
+    var loaiBanVeSelect = document.getElementById('loaiBanVe');
+    var loaiBanVeValue = loaiBanVeSelect.value;
+
+    var kiemTraSelect = document.getElementById('kiemTra');
+    var kiemTraValue = kiemTraSelect.value;
+
+    var lamDenSelect = document.getElementById('lamDen');
+    var lamDenValue = lamDenSelect.value;
+
+    var thuongGapSelect = document.getElementById('thuongGap');
+    var thuongGapValue = thuongGapSelect.value;
+
+    if (!loaiBanVeValue) {
+      alert('Chưa chọn loại bản vẽ')
+      return 0
+    }
+
+    if (!kiemTraValue) {
+      alert('Chưa chọn có kiểm tra hay không')
+      return 0
+    }
+
+    if (!lamDenValue) {
+      alert('Chưa chọn có làm đen hay không')
+      return 0
+    }
+
+    if (!thuongGapValue) {
+      alert('Chưa chọn bản vẽ thường hay gấp')
+      return 0
+    }
+
     // var selectedMaterialValue = document.getElementById('selectedMaterial').value;
 
 
@@ -182,6 +278,10 @@ function collectTableData() {
         'soRep': soRepValue,
         'loaiSChuan': loaiSChuanValue,
         'sNo': sNoValue,
+        'loaiBanVe': loaiBanVeValue,
+        'kiemTra': kiemTraValue,
+        'lamDen': lamDenValue,
+        'thuongGap': thuongGapValue,
         // 'selectedMaterial': selectedMaterialValue,
         // 'combinedQuyCach': combinedQuyCachValue,
         'pdf_path':pdfPathValue
@@ -227,12 +327,16 @@ function collectTableData() {
               return 0
             }
             var selectElement = cells[1].getElementsByTagName('select')[0];
-            var inputElement2 = cells[1].getElementsByTagName('input')[0];
-            var inputElement3 = cells[1].getElementsByTagName('input')[1];
-            var inputElement4 = cells[1].getElementsByTagName('input')[2];
-          
 
-            if (!selectElement.options[selectElement.selectedIndex].text || !inputElement2.value || !inputElement3.value || !inputElement4.value){
+            var inputElement2 = cells[1].getElementsByTagName('input')[0];
+
+            var inputElement3 = cells[1].getElementsByTagName('input')[1];
+
+            var inputElement4 = cells[1].getElementsByTagName('input')[2];
+
+
+            // if (!selectElement.options[selectElement.selectedIndex].text || !inputElement2.value || !inputElement3.value || !inputElement4.value){
+            if (!inputElement2.value || !inputElement3.value || !inputElement4.value){
               alert('Chưa nhập quy cách')
               return 0
             }
@@ -277,15 +381,165 @@ function collectTableData() {
   }
 
 
+// function addTableRow2() {
+//     var table = document.getElementById("custom-table2").getElementsByTagName('tbody')[0];
+//     var newRow = table.insertRow(table.rows.length);
+
+//     // Cell 1
+//     var cell1 = newRow.insertCell(0);
+
+//     cell1.innerHTML = `
+//         <input list="orderDropdown2" class="form-control custom-input" id="idorderInput2" name="orderInput2" onchange="changeMaterial(this)" autocomplete="off">
+
+//         <datalist id="orderDropdown2" class="custom-datalist">
+//             <option value="" disabled>Chọn vật liệu</option>
+//             {% for material in materials %}
+//                 <option>{{ material }}</option>
+//             {% endfor %}
+//         </datalist>
+//     `;
+
+
+//     var customInput = cell1.querySelector('.custom-input');
+//     var customDatalist = cell1.querySelector('.custom-datalist');
+
+
+//     var cell2 = newRow.insertCell(1);
+
+
+//     cell2.innerHTML = `
+
+//           <div class="input-group" style="width: 100%;">
+//             <select id="select_quycach" class="custom-select" style="width: 30%;">
+//               <option selected></option>
+//               <option value="1">Ø</option>
+//               <option value="2">T</option>
+//             </select>
+
+//             <input list="datalist_quycach_${table.rows.length}" class="form-control custom-input" name="input_quycach_${table.rows.length}" onchange="changeOrder(this)" autocomplete="off" style="height: 38px; width: 70%;">
+//             <datalist id="datalist_quycach_${table.rows.length}">
+//             </datalist>
+
+//             <h3 class="form-control" style="height: 38px; width: 30%;">V1</h3>
+//             <input id='input_v1' type="text" class="form-control" style="height: 38px; width: 70%;">
+
+//             <h3 class="form-control" style="height: 38px; width: 30%;">V2</h3>
+//             <input id='input_v2' type="text" class="form-control form-v2" style="height: 38px; width: 70%;">
+
+
+//           </div>
+
+//     `;
+
+
+//     // Cell 3 (Action)
+//     var cell3 = newRow.insertCell(2);
+//     var removeButton = document.createElement("button");
+//     removeButton.type = "button";
+//     removeButton.innerText = "-";
+//     removeButton.className = "btn btn-danger btn-sm remove-button";
+
+//     removeButton.onclick = function() { removeTableRow(this); };
+//     cell3.appendChild(removeButton);
+// }
+
+// var inputQuycachElements = document.querySelectorAll('#input_quycach');
+
+// inputQuycachElements.forEach(function(element) {
+//     element.addEventListener('change', function() {
+//         changeOrder(this);
+//     });
+// });
+// function changeOrder2(input) {
+//   var dict_material_stages = {{ dict_material_stages|safe }};
+//     var inputValue = input.value;
+
+//     var currentCell = input.parentElement;
+
+//     var currentRow = currentCell.parentElement;
+
+//     var rowIndex = currentRow.rowIndex;
+
+//     var tableBody = currentRow.parentElement;
+
+//     var rows = tableBody.getElementsByTagName('tr');
+
+//     var cells = rows[0].getElementsByTagName('td');
+
+//     var dataListCell = cells.querySelector('datalist'); 
+
+//     var dataList = dataListCell;
+
+
+//     if (inputValue in dict_material_stages) {
+//         dict_material_stages[inputValue].forEach(function(value) {
+//             var option = document.createElement('option');
+
+//             option.value = value;
+//             option.textContent = value;
+//             dataList.appendChild(option); 
+//         });
+//     }
+// }
+
+// function changeOrder2(input) {
+//   var dict_material_stages = {{ dict_material_stages|safe }};
+//   var inputValue = input.value;
+
+//   var currentCell = input.parentElement;
+//   var currentRow = currentCell.parentElement;
+//   var rowIndex = currentRow.rowIndex;
+
+//   var cells = currentRow.getElementsByTagName('td');
+
+//   var cellValues = [];
+
+  
+
+//   var dataList = cells[1].getElementsByTagName('datalist')[0];
+
+//   if (inputValue in dict_material_stages) {
+//     dict_material_stages[inputValue].forEach(function(value) {
+//       var option = document.createElement('option');
+//       option.value = value;
+//       option.textContent = value;
+//       dataList.appendChild(option);
+//     });
+//   }
+// }
+
+function changeOrder2(input) {
+  var dict_material_stages = {{ dict_material_stages|safe }};
+
+  var inputValue = input.value;
+
+  var currentCell = input.parentElement;
+  var currentRow = currentCell.parentElement;
+
+  // Select the second datalist within the current row
+  var dataList = currentRow.querySelector('datalist#datalist_quycach_' + currentRow.rowIndex);
+  dataList.innerText = ''
+  if (inputValue in dict_material_stages) {
+    dict_material_stages[inputValue].forEach(function(value) {
+      var option = document.createElement('option');
+      option.value = value;
+      option.textContent = value;
+      dataList.appendChild(option);
+    });
+  }
+}
+
+
+
+
 function addTableRow2() {
     var table = document.getElementById("custom-table2").getElementsByTagName('tbody')[0];
     var newRow = table.insertRow(table.rows.length);
 
     // Cell 1
     var cell1 = newRow.insertCell(0);
-
     cell1.innerHTML = `
-        <input list="orderDropdown2" class="form-control custom-input" id="orderInput2" name="orderInput2" onchange="changeOrder(this)" autocomplete="off">
+        <input list="orderDropdown2" class="form-control custom-input" id="idorderInput2" name="orderInput2" onchange="changeOrder2(this)" autocomplete="off">
         <datalist id="orderDropdown2" class="custom-datalist">
             <option value="" disabled>Chọn vật liệu</option>
             {% for material in materials %}
@@ -294,41 +548,23 @@ function addTableRow2() {
         </datalist>
     `;
 
-    $(document).ready(function () {
-      $(document).on('input', '#orderInput2', function () {
-          var inputValue = $(this).val().toUpperCase();
-          $(this).val(inputValue);
-      });
-  });
-
-
-
-    var customInput = cell1.querySelector('.custom-input');
-    var customDatalist = cell1.querySelector('.custom-datalist');
-
 
     var cell2 = newRow.insertCell(1);
     cell2.innerHTML = `
-
-          <div class="input-group" style="width: 100%;">
+        <div class="input-group" style="width: 100%;">
             <select id="select_quycach" class="custom-select" style="width: 30%;">
-              <option selected></option>
-              <option value="1">Ø</option>
-              <option value="2">T</option>
+                <option selected></option>
+                <option value="1">Ø</option>
+                <option value="2">T</option>
             </select>
-            <input id='input_quycach' type="text" class="form-control" style="height: 38px; width: 70%;">
-
+            <input list="datalist_quycach_${table.rows.length}" class="form-control custom-input" name="input_quycach_${table.rows.length}" onchange="changeOrder(this)" autocomplete="off" style="height: 38px; width: 70%;">
+            <datalist id="datalist_quycach_${table.rows.length}"></datalist>
             <h3 class="form-control" style="height: 38px; width: 30%;">V1</h3>
             <input id='input_v1' type="text" class="form-control" style="height: 38px; width: 70%;">
-
             <h3 class="form-control" style="height: 38px; width: 30%;">V2</h3>
             <input id='input_v2' type="text" class="form-control form-v2" style="height: 38px; width: 70%;">
-
-
-          </div>
-
+        </div>
     `;
-
 
 
     // Cell 3 (Action)
@@ -337,7 +573,6 @@ function addTableRow2() {
     removeButton.type = "button";
     removeButton.innerText = "-";
     removeButton.className = "btn btn-danger btn-sm remove-button";
-
     removeButton.onclick = function() { removeTableRow(this); };
     cell3.appendChild(removeButton);
 }
@@ -361,7 +596,7 @@ function addTableRow2() {
 
       cell2.innerHTML = `
 
-            <input list="orderDropdown1" class="form-control custom-input" id="orderInput1" name="orderInput1" onchange="changeOrder(this)" autocomplete="off">
+            <input list="orderDropdown1" class="form-control custom-input" id="orderInput1" name="orderInput1" onchange="changeOrder1(this)" autocomplete="off">
             <datalist id="orderDropdown1" class="custom-datalist">
                 <option value="" disabled>Chọn công đoạn</option>
                 {% for processing_stage in processing_stages %}
@@ -531,6 +766,13 @@ $(document).on('keydown', '#input_v1', function (e) {
         }
     }
 });
+
+$(document).ready(function () {
+      $(document).on('input', '#orderInput2', function () {
+          var inputValue = $(this).val().toUpperCase();
+          $(this).val(inputValue);
+      });
+    });
 
 
 </script>

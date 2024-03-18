@@ -1,126 +1,142 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form id="myForm" method="post" action="{% url 'save_kiemtratuchu' %}"></form>
-    {% csrf_token %}
+{% load static %}
+<div class="main-panel">        
+    <div class="content-wrapper">
+      <div class="row">
+        <form id="myForm" method="post" action="{% url 'save_kiemtratuchu' %}"></form>
+            {% csrf_token %}
+            <div class="col-md-5 grid-margin stretch-card">
+                <div id="tableContainer">
+                    <div style="margin-left: 50px;">
+                        <h2 style="margin-top: 20px; text-align: center;">Biểu kiểm tra tự chủ các công đoạn</h2>
 
-    <div id="tableContainer">
-        <div style="margin-left: 50px;">
-            <h2 style="margin-top: 20px; text-align: center;">Biểu kiểm tra tự chủ các công đoạn</h2>
-            <h3 style="margin-top: 20px; display: inline-block;">Số yêu cầu </h3>
-            <!-- <h3 class= 'req' style="display: inline-block;">{{ request_info }}</h3> -->
+                        <h3 style="margin-top: 20px; display: inline-block;">Số yêu cầu </h3>
+                        <!-- <h3 class= 'req' style="display: inline-block;">{{ request_info }}</h3> -->
 
-            {% if  request_info.rep_number == 0 %}
-                <h3 class= 'req' style="display: inline-block;">{{ request_info.request_number }}</h3>
-            {% else %}
-                <h3 class= 'req' style="display: inline-block;">{{ request_info.request_number }} - {{ request_info.rep_number }}</h3>
-            {% endif %}
+                        {% if  request_info.rep_number == 0 %}
+                            <h3 class= 'req' style="display: inline-block;">{{ request_info.request_number }}</h3>
+                        {% else %}
+                            <h3 class= 'req' style="display: inline-block;">{{ request_info.request_number }} - {{ request_info.rep_number }}</h3>
+                        {% endif %}
 
 
-            <table id="dataTable" class="table" style="width: 100%; margin: auto;">
+                        <table id="dataTable" class="table" style="width: 100%; margin: auto;">
+                            
+                            <tr>
+                                <td class="stage-cell">Công đoạn</td>
+                        
+                                {% for employee_processing in employee_processing_list %}
+                                    <td class="stage-cell">{{ employee_processing.stage }}</td>
+                                {% endfor %}
+                        
+                                <input type="hidden" class="form-control" name="len_ep" value="{{ employee_processing_list|length }}">
+                            </tr>
+
+                            <tr>
+                                <td class="stage-cell">MSNV</td>
+                                {% for user in users_list %}
+                                    <td class="stage-cell">{{ user }}</td>
+                                {% endfor %}
+                            </tr>
+                        
+                            <tr>
+                                <td class="stage-cell" rowspan="3">Số thứ tự KT</td>
+                                {% for _ in employee_processing_list %}
+                                    <td class="stage-cell">Max</td>
+                                {% endfor %}
+                            </tr>
+                        
+                            <tr>
+                                {% for _ in employee_processing_list %}
+                                    <td class="stage-cell">Min</td>
+                                {% endfor %}
+                            </tr>
+                        
+                            <tr>
+                                {% for _ in employee_processing_list %}
+                                    <td class="stage-cell">OK/NG</td>
+                                {% endfor %}
+                            </tr>
+                        
+                            {% if stages_tuchu %}
+                                {% for inspect, values_dict in inspects_dict.items %}
+
+                                    <tr>
+
+                                        <td rowspan="4">
+                                            <button type="button" onclick="removeThreeRows(this)" class="btn btn-danger btn-sm">-</button>
+
+                                            <input type="text" name="input_0" value="{{inspect}}" style="width: 120px;">
                 
-                <tr>
-                    <td class="stage-cell">Công đoạn</td>
-            
-                    {% for employee_processing in employee_processing_list %}
-                        <td class="stage-cell">{{ employee_processing.stage }}</td>
-                    {% endfor %}
-            
-                    <input type="hidden" class="form-control" name="len_ep" value="{{ employee_processing_list|length }}">
-                </tr>
+                                        </td>
+                                        {% for max_value in values_dict.max_values %}
 
-                <tr>
-                    <td class="stage-cell">MSNV</td>
-                    {% for user in users_list %}
-                        <td class="stage-cell">{{ user }}</td>
-                    {% endfor %}
-                </tr>
-            
-                <tr>
-                    <td class="stage-cell" rowspan="3">Số thứ tự KT</td>
-                    {% for _ in employee_processing_list %}
-                        <td class="stage-cell">Max</td>
-                    {% endfor %}
-                </tr>
-            
-                <tr>
-                    {% for _ in employee_processing_list %}
-                        <td class="stage-cell">Min</td>
-                    {% endfor %}
-                </tr>
-            
-                <tr>
-                    {% for _ in employee_processing_list %}
-                        <td class="stage-cell">OK/NG</td>
-                    {% endfor %}
-                </tr>
-            
-                {% if stages_tuchu %}
-                    {% for inspect, values_dict in inspects_dict.items %}
+                                            <td hidden="true">
+                                                
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for max_value in values_dict.max_values %}
 
-                        <tr>
+                                            <td>
+                                                <input type="number" name="input_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
+                                                    placeholder="Max" style="width: 100px;" value="{% if max_value %}{{ max_value }}{% endif %}">
+                                            </td>
 
-                            <td rowspan="4">
-                                <button type="button" onclick="removeThreeRows(this)" class="btn btn-danger btn-sm">-</button>
-
-                                <input type="text" name="input_0" value="{{inspect}}" style="width: 120px;">
-    
-                            </td>
-                            {% for max_value in values_dict.max_values %}
-
-                                <td hidden="true">
-                                    
-                                </td>
-                            {% endfor %}
-                        </tr>
-                        <tr>
-                            {% for max_value in values_dict.max_values %}
-
-                                <td>
-                                    <input type="number" name="input_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
-                                           placeholder="Max" style="width: 100px;" value="{% if max_value %}{{ max_value }}{% endif %}">
-                                </td>
-
-                            {% endfor %}
+                                        {% endfor %}
 
 
-                        </tr>
-            
-                        <tr>
-                            {% for min_value in values_dict.min_values %}
-                                <td>
-                                    <input type="number" name="input_2_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
-                                           placeholder="Min" style="width: 90px;" value="{% if min_value %}{{ min_value }}{% endif %}">
-                                </td>
-                            {% endfor %}
-                        </tr>
-            
-                        <tr>
-                            {% for okng_value in values_dict.okngs %}
-                                <td>
-                                    <select name="input_3_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}">
-                                        <option value="OK" {% if okng_value == 'OK' %}selected{% endif %}>OK</option>
-                                        <option value="NG" {% if okng_value == 'NG' %}selected{% endif %}>NG</option>
-                                    </select>
-                                </td>
-                            {% endfor %}
+                                    </tr>
+                        
+                                    <tr>
+                                        {% for min_value in values_dict.min_values %}
+                                            <td>
+                                                <input type="number" name="input_2_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
+                                                    placeholder="Min" style="width: 90px;" value="{% if min_value %}{{ min_value }}{% endif %}">
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                        
+                                    <tr>
+                                        {% for okng_value in values_dict.okngs %}
+                                            <td>
+                                                <select name="input_3_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}">
+                                                    <option value="OK" {% if okng_value == 'OK' %}selected{% endif %}>OK</option>
+                                                    <option value="NG" {% if okng_value == 'NG' %}selected{% endif %}>NG</option>
+                                                </select>
+                                            </td>
+                                        {% endfor %}
 
-                        </tr>
+                                    </tr>
 
-                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        </table>
+
+
+
+                        <button type="button" onclick="addThreeRows()" class="btn btn-success btn-sm">+</button>
+                    </div>
+                    <div style="margin-top: 20px; margin-left: 40px; ">
+                        <button class="btn btn-primary" onclick="saveValues()">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7 grid-margin stretch-card">
+                {% if request_info.order.drawing %}
+                    <iframe src="{% static request_info.order.drawing.url %}" width="100%" height="1120px" frameborder="0"></iframe>
                 {% endif %}
-            </table>
+            </div>
 
-
-
-            <button type="button" onclick="addThreeRows()" class="btn btn-success btn-sm">+</button>
-        </div>
-        <div style="margin-top: 20px; margin-left: 40px; ">
-            <button class="btn btn-primary" onclick="saveValues()">Lưu</button>
+        </form>
 
         </div>
     </div>
-</form>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>

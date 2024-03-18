@@ -51,11 +51,108 @@
                     <td><input type="text" id="repNumberInput" name="rep_number" value="{{ request_info.rep_number }}" ></td>
                 </tr>
        
-
                 <tr>
                     <th scope="row">Số lượng</th>
                     <td><input type="text" name="quantity" value="{{ request_info.quantity }}" ></td>
                 </tr>
+
+                <!-- <tr>
+                    <th scope="row">Loại bản vẽ</th>
+                    <td><input type="text" id="drawingType" name="drawing_type" value="{{ request_info.drawing_type }}" ></td>
+                </tr>
+                <tr>
+                    <th scope="row">Kiểm tra</th>
+                    <td><input type="text" id="inspection" name="inspection" value="{{ request_info.inspection }}" ></td>
+                </tr>
+       
+                <tr>
+                    <th scope="row">Làm đen</th>
+                    <td><input type="text" id="makeBlack" name="make_black" value="{{ request_info.make_black }}" ></td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Bản vẽ</th>
+                    <td><input type="text" id="usuallyOrUrgent" name="usually_or_urgent" value="{{ request_info.usually_or_urgent }}" ></td>
+                </tr> -->
+
+
+                <tr>
+                    <th scope="row">Loại bản vẽ</th>
+                    <td>
+                        <select id="drawingType" name="drawing_type">
+                            <!-- <option value="">-- Chọn loại bản vẽ --</option> -->
+                            <option value="Chính thức" {% if request_info.drawing_type == "Chính thức" %} selected {% endif %}>Chính thức</option>
+                            <option value="Thử nghiệm" {% if request_info.drawing_type == "Thử nghiệm" %} selected {% endif %}>Thử nghiệm</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Kiểm tra</th>
+                    <td>
+                        <select id="inspection" name="inspection">
+                            <!-- <option value="">-- Chọn kiểm tra --</option> -->
+                            <option value="Có" {% if request_info.inspection == "Có" %} selected {% endif %}>Có</option>
+                            <option value="Không" {% if request_info.inspection == "Không" %} selected {% endif %}>Không</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Làm đen</th>
+                    <td>
+                        <select id="makeBlack" name="make_black">
+                            <!-- <option value="">-- Chọn làm đen --</option> -->
+                            <option value="Có" {% if request_info.make_black == "Có" %} selected {% endif %}>Có</option>
+                            <option value="Không" {% if request_info.make_black == "Không" %} selected {% endif %}>Không</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Bản vẽ</th>
+                    <td>
+                        <select id="usuallyOrUrgent" name="usually_or_urgent">
+                            <!-- <option value="">-- Chọn loại bản vẽ --</option> -->
+                            <option value="Thường" {% if request_info.usually_or_urgent == "Thường" %} selected {% endif %}>Thường</option>
+                            <option value="Gấp" {% if request_info.usually_or_urgent == "Gấp" %} selected {% endif %}>Gấp</option>
+                        </select>
+                    </td>
+                </tr>
+                
+
+
+                <style>
+
+                    select {
+                        width: 100%;
+                        padding: 10px;
+                        font-size: 16px;
+                        font-family: Arial, sans-serif;
+                        color: #333;
+                        border: 1px solid #ccc; 
+                        border-radius: 1px;
+                        background-color: #fff;
+                        /* appearance: none;  */
+                        cursor: pointer; 
+                        outline: none; 
+                    }
+            
+
+                    select:hover {
+                        border-color: #666;
+                    }    
+
+                    select:focus {
+                        border-color: #999;
+                    }
+   
+                    option {
+                        font-size: 16px;
+                        font-family: Arial, sans-serif;
+                    }
+            
+                    option:hover {
+                        background-color: #f0f0f0;
+                    }
+                </style>
 
                 <tr>
                     <th scope="row">Sno</th>
@@ -64,7 +161,9 @@
 
                         <td><a href="{% url 'sno_detail_edit' instance %}">{{ request_info.order.sno }}</a></td>
                     {% else %}
-                        <td><a href="{% url 'sno_detail_edit' request_info.order.sno %}">{{ request_info.order.sno }}</a></td>
+                        <td><a href="{% url 'sno_detail_edit' instance %}">{{ request_info.order.sno }}</a></td>
+
+                        <!-- <td><a href="{% url 'sno_detail_edit' request_info.order.sno %}">{{ request_info.order.sno }}</a></td> -->
                     {% endif %}
                      
                 </tr>

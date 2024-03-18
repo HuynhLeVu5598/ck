@@ -85,28 +85,41 @@
                   
                     {% for ex in list_ex %}
 
-                        {% if ex.employee_processing.stt == processing_instance.stt %}
-                            <td>{{ ex.shift }}</td>
-                            <td>{{ ex.num_machine }}</td>
+                        {% if ex.employee_processing.stt == processing_instance.stt and processing_instance.stt < current_stt_value %}
+                            <!-- <td>{{ ex.shift }}</td>
+                            <td>{{ ex.num_machine }}</td> -->
+                            <td></td>
+                            <td></td>
+                        {% elif ex.employee_processing.stt == processing_instance.stt and processing_instance.stt == current_stt_value %}
 
-                            <!-- <td>
-
-                                <select id="customSelectok-{{ processing_instance.stt }}" class="custom-select custom-dropdown">
-                                    <option value="{{ ex.shift }}">{{ ex.shift }}</option>
-          
-                                    <option value="a">a</option>
-                                    <option value="b">b</option>
-                                    <option value="c">c</option>
-                                    <option value="d">d</option>
-                                    <option value="e">e</option>
-                                    <option value="f">f</option>
+                            <td>
+                                <select id="customSelect" class="custom-select custom-dropdown">
+                                    <option value=""></option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="D">D</option>
+                                    <option value="E">E</option>
+                                    <option value="F">F</option>
                                 </select>
                             </td>
                             
+        
                             <td>
-                                <input type="text" id="customInputok-{{ processing_instance.stt }}" class="custom-input" placeholder="Số máy" value="{{ ex.num_machine }}">
-                            </td> -->
-
+                                <select id="customInput" class="custom-select custom-input">
+                                    <option value=""></option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </td>
 
                         {% endif %}
 
@@ -116,12 +129,13 @@
                 {% if processing_instance.stage.process_name in st_remain %}
                     <td>
                         <select id="customSelect" class="custom-select custom-dropdown">
-                            <option value="a">A</option>
-                            <option value="b">B</option>
-                            <option value="c">C</option>
-                            <option value="d">D</option>
-                            <option value="e">E</option>
-                            <option value="f">F</option>
+                            <option value=""></option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
                         </select>
                     </td>
                     
@@ -131,7 +145,7 @@
                     </td> -->
 
                     <td>
-                        <select id="customInput" class="custom-input">
+                        <select id="customInput" class="custom-select custom-input">
                             <option value=""></option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -190,8 +204,8 @@
 <style>
 
 .custom-input {
-  width: 80px; 
-  height: 30px; 
+  width: 70px; 
+  height: 40px; 
 }
 
 .custom-dropdown {
@@ -217,23 +231,23 @@
 
 
 
-<!-- Include jQuery library (if not already included) -->
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <style>
     .btn-toggle-active {
-        background-color: #28a745 !important; /* Green color for active state */
-        color: #fff !important; /* White text color for active state */
+        background-color: #28a745 !important; 
+        color: #fff !important; 
     }
 
     .btn-toggle-active-warning {
-        background-color: #ffc107 !important; /* Yellow color for active state */
-        color: #000 !important; /* Black text color for active state */
+        background-color: #ffc107 !important; 
+        color: #000 !important; 
     }
 
     .btn-toggle-active-danger {
-        background-color: #dc3545 !important; /* Red color for active state */
-        color: #fff !important; /* White text color for active state */
+        background-color: #dc3545 !important; 
+        color: #fff !important; 
     }
 </style>
 
@@ -263,6 +277,10 @@ window.onbeforeunload = function(e) {
 $(document).ready(function () {
     $(".hoantat").prop('disabled', true);
     $(".ketthuc").prop('disabled', true);
+
+    {% if already_finish %}
+        $(".hoantat").prop('disabled', false);
+    {% endif %}
     {% if request_info.rep_number == 0 %}
         var requestNumber = '{{ request_info.request_number|urlencode }}';
     {% else %}
@@ -272,6 +290,11 @@ $(document).ready(function () {
     $(".batdau").click(function () {
 
         var numMachineValue = $("#customInput").val();
+        var selectCaValue = $('#customSelect').val();
+
+        if (!selectCaValue) {
+            alert('Số ca không được để trống!');
+        }
 
         if (numMachineValue.trim() === "") {
             alert("Số máy không được để trống!");
@@ -287,11 +310,10 @@ $(document).ready(function () {
                 var $timeElement = $row.find(".time");
 
                 var startTime = new Date();
-                var startTimeString = startTime.toLocaleString(); // Sử dụng toLocaleString để hiển thị cả ngày và giờ
-                var startTimeStringshow = startTime.toLocaleTimeString(); // không hiển thị ngày
+                var startTimeString = startTime.toLocaleString(); 
+                var startTimeStringshow = startTime.toLocaleTimeString(); 
 
 
-                // Lưu giá trị startTime trong data
                 $row.data("startTime", startTime);
 
                 $timeElement.text("Bắt đầu: " + startTimeStringshow);
@@ -320,32 +342,39 @@ $(document).ready(function () {
             var $row = $(this).closest("tr");
             var $timeElement = $row.find(".time");
 
-            // Lấy giá trị startTime từ data
             var startTime = $row.data("startTime");
 
-            // Nếu đã bắt đầu thời gian
             if (startTime) {
 
 
                 var selectCa = document.getElementById('customSelect').value;
                 var inputSoMay = document.getElementById('customInput').value;
 
+                // if (!selectCa) {
+                //     alert('Bạn chưa chọn ca làm việc');
+                //     return false; 
+                // }
+
+                // if (!inputSoMay) {
+                //     alert('Bạn chưa chọn số máy');
+                //     return false; 
+                // }
+
+
                 var endTime = new Date();
-                // var startTimeString = startTime.toLocaleString(); // Sử dụng toLocaleString để hiển thị cả ngày và giờ
-                // var endTimeString = endTime.toLocaleString(); // Sử dụng toLocaleString để hiển thị cả ngày và giờ
-                // var endTimeStringshow = endTime.toLocaleTimeString();  // không hiển thị cả ngày 
-                var startTimeString = startTime.toISOString();  // Use ISO 8601 format
-                var endTimeString = endTime.toISOString();  // Use ISO 8601 format
-                var endTimeStringshow = endTime.toLocaleTimeString();  // Display time without date
-                // Tính toán thời gian giữa hai thời điểm
+                // var startTimeString = startTime.toLocaleString(); 
+                // var endTimeString = endTime.toLocaleString(); 
+                // var endTimeStringshow = endTime.toLocaleTimeString(); 
+                var startTimeString = startTime.toISOString();  
+                var endTimeString = endTime.toISOString();  
+                var endTimeStringshow = endTime.toLocaleTimeString();  
+
                 var timeDiff = endTime.getTime() - startTime.getTime();
-                var minutes = Math.floor(timeDiff / (1000 * 60));  // Chuyển đổi thời gian từ mili giây sang phút
+                var minutes = Math.floor(timeDiff / (1000 * 60));  
 
-                $timeElement.html("Bắt đầu: " + startTime.toLocaleTimeString() + "<br><br>Kết thúc: " + endTimeStringshow + "<br><br>Thời gian: " + minutes + " phút");
+                $timeElement.html("Bắt đầu: " + startTime.toLocaleTimeString() + "<br><br>Kết thúc: " + endTimeStringshow + "<br><br>Thời gian: " + minutes + " phút");            
                 
-                
-
-                // Get the CSRF token from the cookie
+      
                 var csrftoken = getCookie('csrftoken');
 
                 $.ajax({
@@ -369,23 +398,21 @@ $(document).ready(function () {
                             $(".batdau").prop('disabled', false);
 
 
-                            // Thực hiện chuyển hướng
-                            // window.location.href = data.redirect_url;
+                            window.location.href = data.redirect_url;
                         }
                     },
                     error: function (error) {
-                        // Xử lý lỗi (nếu có)
+
                     }
                 });
 
-                // Function to get CSRF token from cookie
+
                 function getCookie(name) {
                     var cookieValue = null;
                     if (document.cookie && document.cookie !== '') {
                         var cookies = document.cookie.split(';');
                         for (var i = 0; i < cookies.length; i++) {
                             var cookie = cookies[i].trim();
-                            // Check if the cookie name matches the desired name
                             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                                 break;
@@ -491,7 +518,7 @@ $(document).ready(function () {
 
                 <iframe src="{{ request_info.drawing }}" width="100%" height="1120px" frameborder="0"></iframe>
     
-              </div>
+            </div>
               
         </div>
     </div>

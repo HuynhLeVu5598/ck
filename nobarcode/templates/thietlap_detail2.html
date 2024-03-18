@@ -12,7 +12,7 @@
             <h3>Chọn thông số</h3>
             
             <!-- Form -->
-            <form id="myForm" method="post" action="{% url 'thietlap_detail' %}">
+            <form id="myForm" method="post" action="{% url 'thietlap_detail' %}" onsubmit="return validateForm()">
               {% csrf_token %}
 
               
@@ -55,6 +55,71 @@
                 <input type="hidden" name="selected_order_sno" value="{{ s_no }}">
 
               </div>
+
+
+
+              <style>
+                .my-custom-select {
+                    display: block;
+                    width: 95%;
+                    padding: .375rem .75rem;
+                    font-size: 0.9rem;
+                    line-height: 1.5;
+                    color: #495057;
+                    background-color: #fff;
+                    background-clip: padding-box;
+                    border: 1px solid #ced4da;
+                    border-radius: .25rem;
+                    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+                }
+              </style>
+
+
+              <div class="form-group row">
+                <label for="loaiBanVe" class="col-sm-4 col-form-label">Loại bản vẽ</label>
+                <div class="col-sm-8">
+                    <select class="my-custom-select" id="loaiBanVe" name="loai_ban_ve">
+                        <option value="" selected></option>
+                        <option value="Chính thức">Bản vẽ chính thức</option>
+                        <option value="Thử nghiệm">Bản vẽ thử nghiệm</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <label for="kiemTra" class="col-sm-4 col-form-label">Kiểm tra</label>
+                <div class="col-sm-8">
+                    <select class="my-custom-select" id="kiemTra" name="kiem_tra">
+                        <option value="" selected></option>
+                        <option value="Có">Có</option>
+                        <option value="Không">Không</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <label for="lamDen" class="col-sm-4 col-form-label">Làm đen</label>
+                <div class="col-sm-8">
+                    <select class="my-custom-select" id="lamDen" name="lam_den">
+                        <option value="" selected></option>
+                        <option value="Có">Có</option>
+                        <option value="Không">Không</option>
+                    </select>
+                </div>
+            </div>
+            
+          
+          <div class="form-group row">
+              <label for="thuongGap" class="col-sm-4 col-form-label">Bản vẽ</label>
+              <div class="col-sm-8">
+                  <select class="my-custom-select" id="thuongGap" name="thuong_gap">
+                      <option value="" selected></option>
+                      <option value="Thường">Thường</option>
+                      <option value="Gấp">Gấp</option>
+                  </select>
+              </div>
+          </div>
+
 
             <!-- Dropdown 4 -->
             <div class="form-group row">
@@ -194,7 +259,30 @@
 </script> -->
 {%endcomment%}
 
+<script>
+  function validateForm() {
+      var loaiBanVeValue = document.getElementById('loaiBanVe').value;
+      var kiemTraValue = document.getElementById('kiemTra').value;
+      var lamDenValue = document.getElementById('lamDen').value;
+      var thuongGapValue = document.getElementById('thuongGap').value;
 
+      if (!loaiBanVeValue) {
+        alert('Chưa chọn loại bản vẽ');
+        return false;
+      } else if (!kiemTraValue) {
+        alert('Chưa chọn có kiểm tra hay không');
+        return false;
+      } else if (!lamDenValue) {
+        alert('Chưa chọn có làm đen hay không');
+        return false;
+      } else if (!thuongGapValue) {
+        alert('Chưa chọn bản vẽ thường hay gấp');
+        return false;
+      }
+
+      return true;
+  }
+</script>
 
 
 

@@ -23,6 +23,8 @@
                 <div class="col-sm-8">
                     <input type="text" class="form-control form-control-lg" id="exampleFormControlInput2" name="so_yeu_cau" placeholder="Nhập số yêu cầu" autocomplete="off" required pattern="[A-Z0-9]+">
                 </div>
+
+
                 <script>
                   document.getElementById("exampleFormControlInput2").addEventListener("input", function() {
                       this.value = this.value.toUpperCase();
@@ -130,6 +132,14 @@
               alert('Số rep phải là 0 khi số yêu cầu bắt đầu bằng số');
               return false; 
           }
+      }
+
+
+      var requestNumbers = JSON.parse('{{ request_numbers_json|escapejs }}');
+
+      if (requestNumbers.includes(soYeuCauValue)) {
+          alert("Số yêu cầu đã tồn tại. Vui lòng nhập một số yêu cầu khác.");
+          return false; 
       }
 
       return true;
