@@ -8,7 +8,7 @@
     <div class="row">
 
         <div class="row col-md-12">
-          <div class="col-md-5 grid-margin stretch-card">
+          <div class="col-md-4 grid-margin stretch-card" style="overflow-y:scroll; max-height: 90vh;">
             <div class="card">
               <div class="card-body">
                 <h3>Chọn thông số</h3>
@@ -16,36 +16,36 @@
                   <!-- Dropdown 2 -->
 
                   <div class="form-group row">
-                    <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
-                    <label id="soYeuCauLabel" class="col-sm-4 col-form-label">{{ so_yeu_cau }}</label>
+                    <label for="exampleFormControlInput2" class="col-sm-5 col-form-label">Số yêu cầu</label>
+                    <label id="soYeuCauLabel" class="col-sm-5 col-form-label">{{ so_yeu_cau }}</label>
                     <input type="hidden" name="so_yeu_cau" value="{{ so_yeu_cau }}">
                 </div>
 
                 <!-- Dropdown 3 -->
                 <div class="form-group row">
-                  <label for="exampleFormControlInput3" class="col-sm-4 col-form-label">Số lượng</label>
-                  <label id="soLuongLabel" class="col-sm-4 col-form-label">{{ so_luong }}</label>
+                  <label for="exampleFormControlInput3" class="col-sm-5 col-form-label">Số lượng</label>
+                  <label id="soLuongLabel" class="col-sm-5 col-form-label">{{ so_luong }}</label>
                   <input type="hidden" name="so_luong" value="{{ so_luong }}">
                 </div>
 
 
                 <div class="form-group row">
-                  <label for="exampleFormControlInputRep" class="col-sm-4 col-form-label">Số rep</label>
-                  <label id="soRepLabel" class="col-sm-4 col-form-label">{{ so_rep }}</label>
+                  <label for="exampleFormControlInputRep" class="col-sm-5 col-form-label">Số rep</label>
+                  <label id="soRepLabel" class="col-sm-5 col-form-label">{{ so_rep }}</label>
                   <input type="hidden" name="so_rep" value="{{ so_rep }}">
                 </div>
 
                 <!-- Radio Buttons -->
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
-                  <label id="loaiSChuanLabel" class="col-sm-4 col-form-label">{{ loai_s_chuan }}</label>
+                  <label class="col-sm-5 col-form-label">Loại S chuẩn</label>
+                  <label id="loaiSChuanLabel" class="col-sm-6 col-form-label">{{ loai_s_chuan }}</label>
                   <input type="hidden" name="loai_s_chuan" value="{{ loai_s_chuan }}">
                 </div>
 
                 <!-- Dropdown 1 -->
                 <div class="form-group row">
-                  <label for="exampleFormControlInput1" class="col-sm-4 col-form-label">S no</label>
-                  <label id="sNoLabel" class="col-sm-4 col-form-label">{{ s_no }}</label>
+                  <label for="exampleFormControlInput1" class="col-sm-5 col-form-label">Sno</label>
+                  <label id="sNoLabel" class="col-sm-5 col-form-label">{{ s_no }}</label>
                   <input type="hidden" name="selected_order_sno" value="{{ s_no }}">
                 </div>
 
@@ -69,19 +69,19 @@
 
 
                 <div class="form-group row">
-                  <label for="loaiBanVe" class="col-sm-4 col-form-label">Loại bản vẽ</label>
-                  <div class="col-sm-8">
+                  <label for="loaiBanVe" class="col-sm-5 col-form-label">Loại Bản Vẽ</label>
+                  <div class="col-sm-7">
                       <select class="my-custom-select" id="loaiBanVe" name="loai_ban_ve">
                           <option value="" selected></option>
-                          <option value="Chính thức">Bản vẽ chính thức</option>
-                          <option value="Thử nghiệm">Bản vẽ thử nghiệm</option>
+                          <option value="Chính thức">Bản Vẽ Chính Thức</option>
+                          <option value="Thử nghiệm">Bản Vẽ Thử Nghiệm</option>
                       </select>
                   </div>
               </div>
               
               <div class="form-group row">
-                  <label for="kiemTra" class="col-sm-4 col-form-label">Kiểm tra</label>
-                  <div class="col-sm-8">
+                  <label for="kiemTra" class="col-sm-5 col-form-label">Kiểm Tra</label>
+                  <div class="col-sm-7">
                       <select class="my-custom-select" id="kiemTra" name="kiem_tra">
                           <option value="" selected></option>
                           <option value="Có">Có</option>
@@ -91,8 +91,8 @@
               </div>
               
               <div class="form-group row">
-                  <label for="lamDen" class="col-sm-4 col-form-label">Làm đen</label>
-                  <div class="col-sm-8">
+                  <label for="lamDen" class="col-sm-5 col-form-label">Làm Đen</label>
+                  <div class="col-sm-7">
                       <select class="my-custom-select" id="lamDen" name="lam_den">
                           <option value="" selected></option>
                           <option value="Có">Có</option>
@@ -103,8 +103,8 @@
               
             
             <div class="form-group row">
-                <label for="thuongGap" class="col-sm-4 col-form-label">Bản vẽ</label>
-                <div class="col-sm-8">
+                <label for="thuongGap" class="col-sm-5 col-form-label">Bản Vẽ</label>
+                <div class="col-sm-7">
                     <select class="my-custom-select" id="thuongGap" name="thuong_gap">
                         <option value="" selected></option>
                         <option value="Thường">Thường</option>
@@ -123,8 +123,8 @@
                         <table class="table table-bordered" id="custom-table2">
                           <thead>
                             <tr>
-                              <th style="width: 40%;">Vật liệu</th>
-                              <th style="width: 60%;">Quy cách 1 pcs</th>
+                              <th style="width: 40%;">Vật Liệu</th>
+                              <th style="width: 60%;">Quy Cách 1 pcs</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -135,13 +135,11 @@
                     </div>
                   </div>
                 </div>
-                
-
 
 
 
                 <div class="form-group row">
-                  <label for="exampleFormControlSelect5" class="col-sm-10 col-form-label" style="width: 20px;">Thời gian gia công 1 pcs </label>
+                  <label for="exampleFormControlSelect5" class="col-sm-10 col-form-label" style="width: 20px;">Thời Gian Gia Công </label>
                 </div>
 
                 <div class="form-group row grid-margin stretch-card">
@@ -177,7 +175,7 @@
           </div>
 
 
-          <div class="col-md-7 grid-margin stretch-card">
+          <div class="col-md-8 grid-margin stretch-card">
             {% if pdf_path %}
               <iframe src="{{ pdf_path }}" width="100%" height="1120px" frameborder="0"></iframe>
             {% endif %}
@@ -187,7 +185,7 @@
 
           <div class="col-md-12 grid-margin stretch-card">
             <div class="form-group row">
-              <div class="col-sm-8 offset-sm-4">
+              <div class="col-sm-5 offset-sm-4">
                 <button onclick="collectTableData()" type="button" class="btn btn-primary">Lưu</button>
               </div>
             </div>
@@ -412,7 +410,7 @@ function collectTableData() {
 //           <div class="input-group" style="width: 100%;">
 //             <select id="select_quycach" class="custom-select" style="width: 30%;">
 //               <option selected></option>
-//               <option value="1">Ø</option>
+//               <option value="1">P</option>
 //               <option value="2">T</option>
 //             </select>
 
@@ -516,19 +514,22 @@ function changeOrder2(input) {
   var currentCell = input.parentElement;
   var currentRow = currentCell.parentElement;
 
+
+
   // Select the second datalist within the current row
   var dataList = currentRow.querySelector('datalist#datalist_quycach_' + currentRow.rowIndex);
   dataList.innerText = ''
   if (inputValue in dict_material_stages) {
     dict_material_stages[inputValue].forEach(function(value) {
-      var option = document.createElement('option');
-      option.value = value;
-      option.textContent = value;
-      dataList.appendChild(option);
+      if ((inputValue == 'BTP')) {
+        var option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        dataList.appendChild(option);
+      }
     });
   }
 }
-
 
 
 
@@ -539,7 +540,7 @@ function addTableRow2() {
     // Cell 1
     var cell1 = newRow.insertCell(0);
     cell1.innerHTML = `
-        <input list="orderDropdown2" class="form-control custom-input" id="idorderInput2" name="orderInput2" onchange="changeOrder2(this)" autocomplete="off">
+        <input list="orderDropdown2" class="form-control custom-input" id="select_vatlieu_${table.rows.length}" name="orderInput2" onchange="changeOrder2(this)" autocomplete="off">
         <datalist id="orderDropdown2" class="custom-datalist">
             <option value="" disabled>Chọn vật liệu</option>
             {% for material in materials %}
@@ -552,19 +553,23 @@ function addTableRow2() {
     var cell2 = newRow.insertCell(1);
     cell2.innerHTML = `
         <div class="input-group" style="width: 100%;">
-            <select id="select_quycach" class="custom-select" style="width: 30%;">
+
+            <select id="select_quycach" class="custom-select" style="width: 30%;" onchange="selectQuycachChanged(this)">
                 <option selected></option>
-                <option value="1">Ø</option>
-                <option value="2">T</option>
+                <option value="P">P</option>
+                <option value="T">T</option>
             </select>
-            <input list="datalist_quycach_${table.rows.length}" class="form-control custom-input" name="input_quycach_${table.rows.length}" onchange="changeOrder(this)" autocomplete="off" style="height: 38px; width: 70%;">
+            <input list="datalist_quycach_${table.rows.length}" class="form-control custom-input" oninput="toUpperCase(this)" id="input_quycach_${table.rows.length}" name="input_quycach_${table.rows.length}" onchange="changeOrder(this)" autocomplete="off" style="height: 38px; width: 70%;">
+
             <datalist id="datalist_quycach_${table.rows.length}"></datalist>
-            <h3 class="form-control" style="height: 38px; width: 30%;">V1</h3>
-            <input id='input_v1' type="text" class="form-control" style="height: 38px; width: 70%;">
-            <h3 class="form-control" style="height: 38px; width: 30%;">V2</h3>
-            <input id='input_v2' type="text" class="form-control form-v2" style="height: 38px; width: 70%;">
+            <p class="form-control" style="height: 38px; width: 30%;">V1</p>
+            <input id='input_v1' type="text" class="form-control" oninput="toUpperCase(this)" style="height: 38px; width: 70%;">
+            <p class="form-control" style="height: 38px; width: 30%;">V2</p>
+            <input id='input_v2' type="text" class="form-control form-v2" oninput="toUpperCase(this)" style="height: 38px; width: 70%;">
         </div>
     `;
+
+
 
 
     // Cell 3 (Action)
@@ -577,6 +582,56 @@ function addTableRow2() {
     cell3.appendChild(removeButton);
 }
 
+function toUpperCase(input) {
+    input.value = input.value.toUpperCase();
+}
+
+function selectQuycachChanged(input) {
+
+    var dict_material_stages = {{ dict_material_stages|safe }};
+
+    var inputValue = input.value;
+
+    var selectElement = input.parentElement.querySelector('select'); 
+    var currentCell = selectElement.parentElement;
+
+
+    var currentRow = currentCell.parentElement.parentElement; 
+
+    var dataList = currentRow.querySelector('datalist#datalist_quycach_' + currentRow.rowIndex);
+    dataList.innerText = ''
+
+    var input_quycach = document.getElementById('input_quycach_' + currentRow.rowIndex);
+
+    input_quycach.value = '';
+
+
+    var select_vatlieu = document.getElementById('select_vatlieu_' + currentRow.rowIndex);
+    var vatLieuValue = select_vatlieu.value;
+
+    if (!vatLieuValue) {
+        alert('Chưa chọn vật liệu');
+        input.value = ''
+
+    } else {
+        if (vatLieuValue in dict_material_stages) {
+            dict_material_stages[vatLieuValue].forEach(function(value) {
+                if ((inputValue == value.substring(0, 1) && vatLieuValue !== 'BTP')) {
+                  var option = document.createElement('option');
+                  option.value = value.substring(1);
+                  option.textContent = value.substring(1);
+                  dataList.appendChild(option);
+                }
+                if ((vatLieuValue == 'BTP' && inputValue == '')) {
+                  var option = document.createElement('option');
+                  option.value = value;
+                  option.textContent = value;
+                  dataList.appendChild(option);
+                }
+            });
+        }
+    }
+}
 
 
 
@@ -650,6 +705,7 @@ function addTableRow2() {
 
 
 </script>
+
 
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

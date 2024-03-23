@@ -13,23 +13,23 @@
 
 
       <!-- Cột chứa các dropdown -->
-      <div class="col-md-5 grid-margin stretch-card">
+      <div class="col-md-4 grid-margin stretch-card" style="overflow-y:scroll; max-height: 90vh;">
         <div class="card">
           <div class="card-body">
             <h3>Chỉnh sửa Sno</h3>
 
         
             <div class="form-group row">
-                <label for="orderDropdown" class="col-sm-4 col-form-label">Loại S</label>
-                <div class="col-sm-8">
+                <label for="orderDropdown" class="col-sm-3 col-form-label">Loại S</label>
+                <div class="col-sm-7">
                     <label class="col-sm-16 col-form-label">{{ type_s }}</label>
                     <input hidden type="text" class="form-control" name="type_s" value="{{ type_s }}">
                 </div>
             </div>
         
             <div class="form-group row">
-                <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
-                <div class="col-sm-8">
+                <label for="orderDropdown" class="col-sm-3 col-form-label">S no</label>
+                <div class="col-sm-9">
                     <label hidden class="col-sm-16 col-form-label" id="snoOld">{{ sno_instance }}</label>
 
                     <input type="text" class="form-control" name="sno_instance" value="{{ sno_instance }}" oninput="toUpperCase(this)">
@@ -46,15 +46,15 @@
             
 
             <!-- <div class="form-group row">
-                <label for="orderDropdown" class="col-sm-4 col-form-label">Vật liệu</label>
-                <div class="col-sm-8">
+                <label for="orderDropdown" class="col-sm-5 col-form-label">Vật liệu</label>
+                <div class="col-sm-7">
                     <input type="text" class="form-control" name="materials" value="{{ materials }}">
                 </div>
             </div>
         
             <div class="form-group row">
-                <label for="orderDropdown" class="col-sm-4 col-form-label">Quy cách 1 pcs</label>
-                <div class="col-sm-8">
+                <label for="orderDropdown" class="col-sm-5 col-form-label">Quy cách 1 pcs</label>
+                <div class="col-sm-7">
                     <input type="text" class="form-control" name="specification" value="{{ specification }}">
                 </div>
             </div> -->
@@ -64,10 +64,10 @@
             <div class="form-group row">
                 <table class="table table-bordered" id="custom-table2">
                     <thead>
-                        <tr>
-                            <th style="width: 40%;">Vật liệu</th>
-                            <th style="width: 60%;">Quy cách 1 pcs</th>
-                            <th>Action</th>
+                        <tr style="width: 100%;">
+                            <th style="width: 45%;">Vật liệu</th>
+                            <th style="width: 55%;">Quy cách 1 pcs</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -96,18 +96,18 @@
                                             <input type="text" class="form-control" name="specifications[]" value="{{ spec }}">
                                         </div>
                                     </div> -->
-                                    <div class="input-group" style="width: 100%;">
-                                        <select class="custom-select" style="width: 35%;">
+                                    <div class="input-group" style="width: 100% 200px; ">
+                                        <select class="custom-select" style="height: 38px; width: 35%;">
                                         <option selected> {{ahead_spec}}</option>
-                                        {% if ahead_spec == 'Ø'%}
+                                        {% if ahead_spec == 'P'%}
                                             <option value="2">T</option>
 
                                         {% elif ahead_spec == 'T'%}
-                                            <option value="1">Ø</option>
+                                            <option value="1">P</option>
 
                                         {%endif%}
                                         </select>
-                                        <input type="text" class="form-control" aria-label="Text input with dropdown button" style="height: 38px; width: 65%;" value="{{ spec }}">
+                                        <input type="text" class="form-control custom-input" aria-label="Text input with dropdown button" style="height: 38px; width: 65%;" value="{{ spec }}">
                                     </div>
                         
 
@@ -119,6 +119,24 @@
                         {% endfor %}
                     </tbody>
                 </table>
+
+
+                <style>
+
+                    .custom-input-container {
+                        width: 120px; 
+                    }
+
+                    .custom-input {
+                        width: 170px; 
+                    }
+
+
+                </style>
+
+
+
+
                 <button type="button" onclick="addTableRow2()" class="btn btn-success btn-sm">+</button>
             </div>
             
@@ -137,8 +155,8 @@
                 <table class="table table-bordered" id="custom-table">
                     <thead>
                         <tr>
-                            <th width="20%">Thứ tự</th>
-                            <th width="50%">Công đoạn</th>
+                            <th width="10%">Thứ tự</th>
+                            <th width="60%">Công đoạn</th>
                             <th width="30%">Thời gian</th>
                         </tr>
                     </thead>
@@ -157,7 +175,7 @@
                                     </datalist>
                                 </td>
     
-                                <td><input type="text" class="form-control" name="time_required[]" value="{{ processing_time.time_required }}"></td>
+                                <td><input type="text" class="form-control custom-input" name="time_required[]" value="{{ processing_time.time_required }}"></td>
 
 
                                 <td>
@@ -228,9 +246,10 @@
         </div>
 
 
-        <div class="col-md-7 grid-margin stretch-card">
+        <div class="col-md-8 grid-margin stretch-card">
 
-
+            <div class="card">
+                <div class="card-body">
             <!-- <div class="form-group">
                 <h3 for="pdfFile">Chọn tệp PDF:</h3>
                 <input type="file" name="pdfFile" accept=".pdf" class="form-control-file">
@@ -240,19 +259,21 @@
             <iframe src="{% static drawing %}" width="100%" height="1120px" frameborder="0"></iframe>
             <input type="text" name="pdf_path" value="{{ drawing }}" hidden> -->
 
-            <div class="form-group">
-                <h3 for="pdfFile">Chọn tệp PDF:</h3>
-                <!-- <input type="file" name="pdfFile" accept=".pdf" class="form-control-file" id="pdfInput"> -->
-                <form method="post" enctype="multipart/form-data" action="{% url 'sno_detail_edit_save' %}">
-                    {% csrf_token %}
-                    <input type="file" name="pdfFile" accept=".pdf" class="form-control-file" id="pdfInput">
-                    <!-- <button type="submit">Submit</button> -->
+                    <h3 for="pdfFile">Chọn tệp PDF:</h3>
+                    <!-- <input type="file" name="pdfFile" accept=".pdf" class="form-control-file" id="pdfInput"> -->
+                    <form method="post" enctype="multipart/form-data" action="{% url 'sno_detail_edit_save' %}">
+                        {% csrf_token %}
+                        <input type="file" name="pdfFile" accept=".pdf" class="form-control-file" id="pdfInput">
+                        <!-- <button type="submit">Submit</button> -->
+
+
+                    <br>
+                    <iframe id="pdfIframe" width="100%" height="1120px" frameborder="0" src="{% static drawing %}"></iframe>
+                    <input type="text" name="pdf_path" id="pdfPath" value="{{ drawing }}" hidden>
+                    <input type="text" name="iframesource" id="iframesource" value="" hidden>
+                </div>
             </div>
-            
-            <iframe id="pdfIframe" width="100%" height="1120px" frameborder="0" src="{% static drawing %}"></iframe>
-            <input type="text" name="pdf_path" id="pdfPath" value="{{ drawing }}" hidden>
-            <input type="text" name="iframesource" id="iframesource" value="" hidden>
-            
+
             <script>
                 document.getElementById('pdfInput').addEventListener('change', function() {
                     var iframe = document.getElementById('pdfIframe');
@@ -494,7 +515,7 @@
             <div class="input-group" style="width: 100%;">
                 <select class="custom-select" style="width: 35%;" onchange="handleInputChange()">
                 <option selected></option>
-                <option value="1">Ø</option>
+                <option value="1">P</option>
                 <option value="2">T</option>
                 </select>
                 <input type="text" class="form-control" aria-label="Text input with dropdown button" style="height: 38px; width: 65%;" oninput="handleInputChange()">

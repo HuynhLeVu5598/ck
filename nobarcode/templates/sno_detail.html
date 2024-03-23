@@ -1,19 +1,18 @@
 
 
+     <!-- <div class="col-md-4 grid-margin stretch-card" style="overflow-y: auto; max-height: 200vh;"> -->
 {% extends 'base.html' %}
 
 {% block content %}
 {% load static%}
 
 
-
 <div class="main-panel">        
   <div class="content-wrapper">
     <div class="row">
 
+       <div class="col-md-4 grid-margin stretch-card" style="overflow-y:scroll; max-height: 90vh;">
 
-
-      <div class="col-md-5 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
             <h3>Chi tiết Sno</h3>
@@ -21,7 +20,7 @@
 
               <div class="form-group row">
                 <label for="orderDropdown" class="col-sm-4 col-form-label">Loại S</label>
-                <div class="col-sm-8">
+                <div class="col-sm-7">
 
                     <label class="col-sm-16 col-form-label">{{ selected_order.get_type_s_display }}</label>
                 </div>
@@ -31,21 +30,21 @@
 
             <div class="form-group row">
               <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
-              <div class="col-sm-8">
+              <div class="col-sm-7">
                     <label class="col-sm-16 col-form-label">{{ selected_order.sno }}</label>
               </div>
             </div>
           
             <div class="form-group row">
                 <label for="orderDropdown" class="col-sm-4 col-form-label">Vật liệu</label>
-                <div class="col-sm-8">
+                <div class="col-sm-7">
                       <label class="col-sm-16 col-form-label">{{ selected_order.materials }}</label>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="orderDropdown" class="col-sm-4 col-form-label">Quy cách 1 pcs</label>
-                <div class="col-sm-8">
+                <div class="col-sm-7">
                       <label class="col-sm-16 col-form-label">{{ selected_order.specification }}</label>
                 </div>
             </div>
@@ -100,25 +99,18 @@
                   window.location.href = "/sno/" + selectedOrderSno + "/";
               }
           </script>
-          
-        
-          
-            
 
-
-          </div>
- 
-
-          
-          
+            </div>
           </div>
         </div>
 
-          <div class="col-md-7 grid-margin stretch-card">
-            {% if drawing %}
-                <iframe src="{% static drawing %}" width="100%" height="1120px" frameborder="0"></iframe>
-            {% endif %}
-        </div>
+
+
+        <div class="col-md-8 grid-margin stretch-card">
+        {% if drawing %}
+            <iframe src="{% static drawing %}" width="100%" height="1120px" frameborder="0"></iframe>
+        {% endif %}
+    </div>
 
 
     </div>

@@ -4,46 +4,46 @@
 <div class="main-panel">        
     <div class="content-wrapper">
         <div class="row">
-            <div class="col-md-5 grid-margin stretch-card">
+            <div class="col-md-4 grid-margin stretch-card" style="overflow-y:scroll; max-height: 90vh;">
                 <div class="card">
                     <div class="card-body">
                         <h3>Chọn thông số</h3>
 
                         <!-- Dropdown 2 -->
                         <div class="form-group row">
-                            <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
-                            <label for="value_soyeucau" class="col-sm-4 col-form-label">{{ request_info.request_number }}</label>
+                            <label for="exampleFormControlInput2" class="col-sm-5 col-form-label">Số yêu cầu</label>
+                            <label for="value_soyeucau" class="col-sm-5 col-form-label">{{ request_info.request_number }}</label>
                         </div>
 
                         <!-- Dropdown 3 -->
                         <div class="form-group row">
-                            <label for="exampleFormControlInput3" class="col-sm-4 col-form-label">Số lượng</label>
-                            <label for="value_soluong" class="col-sm-4 col-form-label">{{ request_info.quantity }}</label>
+                            <label for="exampleFormControlInput3" class="col-sm-5 col-form-label">Số lượng</label>
+                            <label for="value_soluong" class="col-sm-5 col-form-label">{{ request_info.quantity }}</label>
                         </div>
 
                         <!-- Radio Buttons -->
                         <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
-                            <label for="value_loaischuan" class="col-sm-4 col-form-label">{{ request_info.order.type_s }}</label>
+                            <label class="col-sm-5 col-form-label">Loại S chuẩn</label>
+                            <label for="value_loaischuan" class="col-sm-5 col-form-label">{{ request_info.order.type_s }}</label>
                         </div>
 
                         <!-- Dropdown 1 -->
                         <div class="form-group row">
-                            <label for="exampleFormControlInput1" class="col-sm-4 col-form-label">S no</label>
-                            <label for="value_sno" class="col-sm-4 col-form-label">{{ request_info.order.sno }}</label>
+                            <label for="exampleFormControlInput1" class="col-sm-5 col-form-label">S no</label>
+                            <label for="value_sno" class="col-sm-5 col-form-label">{{ request_info.order.sno }}</label>
                         </div>
 
                         <!-- Dropdown 4 -->
                         <div class="form-group row">
-                            <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">Vật liệu</label>
-                            <label for="value_vatlieu" class="col-sm-4 col-form-label">{{ request_info.order.materials}}</label>
+                            <label for="exampleFormControlSelect4" class="col-sm-5 col-form-label">Vật liệu</label>
+                            <label for="value_vatlieu" class="col-sm-5 col-form-label">{{ request_info.order.materials}}</label>
                         </div>
 
                         <!-- Dropdown 5 -->
                         <div class="form-group row">
-                            <label for="value_quycach1bit" class="col-sm-4 col-form-label" style="width: 120px;">Quy cách 1 pcs</label>
+                            <label for="value_quycach1bit" class="col-sm-5 col-form-label" style="width: 120px;">Quy cách 1 pcs</label>
                   
-                            <label for="value_quycach1bit" class="col-sm-4 col-form-label">{{ request_info.order.specification}}</label>
+                            <label for="value_quycach1bit" class="col-sm-5 col-form-label">{{ request_info.order.specification}}</label>
              
                         </div>
 
@@ -385,7 +385,7 @@ $(document).ready(function () {
                 </div>
             </div>
 
-            <div class="col-md-7 grid-margin stretch-card">
+            <div class="col-md-8 grid-margin stretch-card">
 
                 <iframe src="{{ request_info.order.drawing }}" width="100%" height="1120px" frameborder="0"></iframe>
     

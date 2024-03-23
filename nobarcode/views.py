@@ -90,7 +90,7 @@ class RequestDetailView(DetailView):
         selected_order = Order.objects.filter(sno=sno_instance)
         if len(selected_order) >=2:
             materials = ''
-            specification = ''
+            v2 = ''
 
             for sl in selected_order:
                 try:
@@ -99,17 +99,17 @@ class RequestDetailView(DetailView):
                     drawing = None
                 if sl != selected_order.last():
                     materials += sl.materials + ', '
-                    specification += sl.specification + ', '
+                    v2 += sl.v2 + ', '
                 else:
                     materials += sl.materials
-                    specification += sl.specification 
+                    v2 += sl.v2 
 
 
 
             context = {
                 'request_info': request_info,
                 'materials': materials,
-                'specification': specification,
+                'v2': v2,
                 'drawing':drawing
             }
 
@@ -120,7 +120,7 @@ class RequestDetailView(DetailView):
    
             selected_order = Order.objects.filter(sno=sno_instance).first()
             materials = selected_order.materials
-            specification = selected_order.specification
+            v2 = selected_order.v2
             try:
                 drawing = selected_order.drawing.url
             except:
@@ -129,7 +129,7 @@ class RequestDetailView(DetailView):
             context = {
                 'request_info': request_info,
                 'materials': materials,
-                'specification': specification,
+                'v2': v2,
                 'drawing':drawing
 
             }
@@ -1213,12 +1213,7 @@ def soyeucau_detail(request, request_number):
         rep_number = request_and_rep[1].strip()
 
 
-
-
     request_info = get_object_or_404(RequestInfo, request_number=request_number, rep_number = rep_number)
-    print(request_info)
-    print(rep_number)
-
     
     sno_instance = request_info.order.sno
 
@@ -1839,7 +1834,10 @@ def tuchu_detail(request,request_number):
             max_values = inspections.filter(inspect=inspect).values_list('max_value', flat=True)
             min_values = inspections.filter(inspect=inspect).values_list('min_value', flat=True)
             okngs = inspections.filter(inspect=inspect).values_list('ok_ng', flat=True)
-            inspects_dict[inspect] = {'max_values':max_values, 'min_values':min_values,'okngs':okngs}
+            length_lack = range(len(max_values),len(employee_processing_list))
+            print(length_lack)
+
+            inspects_dict[inspect] = {'max_values':max_values, 'min_values':min_values,'okngs':okngs,'length_lack':length_lack}
 
 
         
@@ -1851,7 +1849,7 @@ def tuchu_detail(request,request_number):
         # context['max_values'] = max_values
         # context['min_values'] = min_values
         # context['okngs'] = okngs
-    print(request_info.order.drawing)
+
     return render(request, 'tuchu_detail2.html', context)
 
 
@@ -1869,6 +1867,12 @@ def save_kiemtratuchu(request):
     saved_values = json.loads(data)
 
     syc = saved_values[0][1]
+    if "-" in syc:
+        request_and_rep = syc.split('-')
+        syc = request_and_rep[0].strip()
+        rep_number = request_and_rep[1].strip()
+    print(syc)
+
     request_info = RequestInfo.objects.get(request_number=syc)
 
     list_cong_doan = saved_values[1][1:]

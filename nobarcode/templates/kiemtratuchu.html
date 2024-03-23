@@ -11,15 +11,15 @@
 
 
       <!-- Cột chứa các dropdown -->
-      <div class="col-md-5 grid-margin stretch-card">
+      <div class="col-md-4 grid-margin stretch-card" style="overflow-y:scroll; max-height: 90vh;">
         <div class="card">
           <div class="card-body">
             <h3>Số yêu cầu</h3>
 
 
             <div class="form-group row">
-              <label for="orderDropdown" class="col-sm-4 col-form-label">Số yêu cầu</label>
-              <div class="col-sm-8">
+              <label for="orderDropdown" class="col-sm-5 col-form-label">Số yêu cầu</label>
+              <div class="col-sm-7">
                   <input list="orderDropdown" class="form-control" id="orderInput" name="orderInput" oninput="toUpperCase(this)" onchange="changeOrder(this)" autocomplete="off">
                   <datalist id="orderDropdown">
                       {% for request_info in all_request_info %}

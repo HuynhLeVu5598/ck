@@ -2,15 +2,18 @@
 
 {% block content %}
 {% load static %}
-<div class="main-panel">        
+<div class="main-panel">       
     <div class="content-wrapper">
+        <h2 style="margin-top: 50px; text-align: center;">Biểu kiểm tra tự chủ các công đoạn</h2>
+
       <div class="row">
+
         <form id="myForm" method="post" action="{% url 'save_kiemtratuchu' %}"></form>
             {% csrf_token %}
-            <div class="col-md-5 grid-margin stretch-card">
+            <div class="col-md-4 grid-margin stretch-card" style="overflow-y:scroll; max-height: 90vh;">
                 <div id="tableContainer">
                     <div style="margin-left: 50px;">
-                        <h2 style="margin-top: 20px; text-align: center;">Biểu kiểm tra tự chủ các công đoạn</h2>
+                        <!-- <h2 style="margin-top: 50px; text-align: center;">Biểu kiểm tra tự chủ các công đoạn</h2> -->
 
                         <h3 style="margin-top: 20px; display: inline-block;">Số yêu cầu </h3>
                         <!-- <h3 class= 'req' style="display: inline-block;">{{ request_info }}</h3> -->
@@ -66,13 +69,15 @@
                                     <tr>
 
                                         <td rowspan="4">
-                                            <button type="button" onclick="removeThreeRows(this)" class="btn btn-danger btn-sm">-</button>
-
-                                            <input type="text" name="input_0" value="{{inspect}}" style="width: 120px;">
-                
+                                            <!-- <button type="button" onclick="removeThreeRows(this)" class="btn btn-danger btn-sm">-</button> -->
+                                            {% if inspect%}
+                                                <input type="text" name="input_0" value="{{inspect}}" style="width: 120px;" readonly> 
+                                            {% else %}
+                                                <input type="text" name="input_0" value="" style="width: 120px;"> 
+                                            {% endif %}
                                         </td>
                                         {% for max_value in values_dict.max_values %}
-
+   
                                             <td hidden="true">
                                                 
                                             </td>
@@ -80,28 +85,68 @@
                                     </tr>
                                     <tr>
                                         {% for max_value in values_dict.max_values %}
+                                            {% if max_value %}
+                                            <td>
+                                                <input type="number" name="input_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
+                                                    placeholder="Max" style="width: 100px;" value="{{ max_value }}" readonly>
+                                            </td>
+                                            {% else %}
+                                            <td>
+                                                <input type="number" name="input_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
+                                                    placeholder="Max" style="width: 100px;" value="" >
+                                            </td>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% for i in values_dict.length_lack %}
 
                                             <td>
                                                 <input type="number" name="input_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
-                                                    placeholder="Max" style="width: 100px;" value="{% if max_value %}{{ max_value }}{% endif %}">
+                                                    placeholder="Max" style="width: 100px;" value="">
                                             </td>
-
                                         {% endfor %}
+
+                                    
+
+ 
 
 
                                     </tr>
                         
                                     <tr>
                                         {% for min_value in values_dict.min_values %}
+                                            {% if min_value %}
+                                                <td>
+                                                    <input type="number" name="input_2_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
+                                                        placeholder="Min" style="width: 90px;" value="{{ min_value }}" readonly>
+                                                </td>
+                                            {% else %}
+                                                <td>
+                                                    <input type="number" name="input_2_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
+                                                        placeholder="Min" style="width: 90px;" value="">
+                                                </td>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% for i in values_dict.length_lack %}
                                             <td>
                                                 <input type="number" name="input_2_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" 
                                                     placeholder="Min" style="width: 90px;" value="{% if min_value %}{{ min_value }}{% endif %}">
                                             </td>
                                         {% endfor %}
+
                                     </tr>
                         
                                     <tr>
                                         {% for okng_value in values_dict.okngs %}
+                                            <td>
+                                                <select name="input_3_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}" readonly>
+                                                    <option value="OK" {% if okng_value == 'OK' %}selected{% endif %}>OK</option>
+                                                    <option value="NG" {% if okng_value == 'NG' %}selected{% endif %}>NG</option>
+                                                </select>
+                                            </td>
+                                        {% endfor %}
+                                        {% for i in values_dict.length_lack %}
                                             <td>
                                                 <select name="input_3_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}">
                                                     <option value="OK" {% if okng_value == 'OK' %}selected{% endif %}>OK</option>
@@ -113,7 +158,9 @@
                                     </tr>
 
                                 {% endfor %}
+
                             {% endif %}
+
                         </table>
 
 
@@ -126,7 +173,7 @@
                 </div>
             </div>
 
-            <div class="col-md-7 grid-margin stretch-card">
+            <div class="col-md-8 grid-margin stretch-card">
                 {% if request_info.order.drawing %}
                     <iframe src="{% static request_info.order.drawing.url %}" width="100%" height="1120px" frameborder="0"></iframe>
                 {% endif %}
@@ -253,8 +300,18 @@
             let cells = table.rows[i].cells;
 
             for (let j = 0; j < cells.length; j++) {
+                let input0 = cells[j].querySelector('input[name="input_0"]');
+                if (input0) {
+                    if (!input0.value) {
+                        alert('Bạn chưa nhập số thứ tự KT');
+                        return 0
+                    } 
+                }
                 let inputElement = cells[j].querySelector('input, select');
+                let input = cells[j].querySelector('input, select');
+
                 if (inputElement) {
+
                     rowValues.push(inputElement.value);
                 }
             }
@@ -331,4 +388,5 @@
     }
 
 </style>
+
 {% endblock %}

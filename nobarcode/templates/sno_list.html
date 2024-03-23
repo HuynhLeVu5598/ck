@@ -11,15 +11,15 @@
 
 
       <!-- Cột chứa các dropdown -->
-      <div class="col-md-5 grid-margin stretch-card">
+      <div class="col-md-4 grid-margin stretch-card" style="overflow-y:scroll; max-height: 90vh;">
         <div class="card">
           <div class="card-body">
             <h3>Chọn thông số</h3>
 
 
               <div class="form-group row">
-                <label for="orderDropdown" class="col-sm-4 col-form-label">Loại S</label>
-                <div class="col-sm-8">
+                <label for="orderDropdown" class="col-sm-3 col-form-label">Loại S</label>
+                <div class="col-sm-9">
 
                     <label class="col-sm-16 col-form-label">{{ types }}</label>
 
@@ -30,8 +30,8 @@
 
 
             <div class="form-group row">
-                <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
-                <div class="col-sm-8">
+                <label for="orderDropdown" class="col-sm-3 col-form-label">S no</label>
+                <div class="col-sm-9">
                     <input list="orderDropdown" class="form-control" id="orderInput" name="orderInput" oninput="toUpperCase(this)" onchange="changeOrder(this)" autocomplete="off">
                     <datalist id="orderDropdown">
                         {% for sno in all_sno %}
@@ -133,8 +133,8 @@
 
 
             <!-- <div class="form-group row">
-              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
-              <div class="col-sm-8">
+              <label for="orderDropdown" class="col-sm-5 col-form-label">S no</label>
+              <div class="col-sm-7">
                   <select class="form-control" id="orderDropdown" onchange="changeOrder(this)">
                       <option value="" disabled {% if not selected_order %}selected{% endif %}>Chọn S no</option>
                       {% for order in orders %}

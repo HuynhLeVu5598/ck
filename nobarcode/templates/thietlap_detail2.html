@@ -6,7 +6,7 @@
 <div class="main-panel">        
   <div class="content-wrapper">
     <div class="row">
-      <div class="col-md-5 grid-margin stretch-card">
+      <div class="col-md-4 grid-margin stretch-card" style="overflow-y:scroll; max-height: 90vh;">
         <div class="card">
           <div class="card-body">
             <h3>Chọn thông số</h3>
@@ -18,22 +18,22 @@
               
               <!-- Dropdown 2 -->
               <div class="form-group row">
-                <label for="exampleFormControlInput2" class="col-sm-4 col-form-label">Số yêu cầu</label>
-                <label for="value_soyeucau"class="col-sm-4 col-form-label">{{ so_yeu_cau }}</label>
+                <label for="exampleFormControlInput2" class="col-sm-5 col-form-label">Số yêu cầu</label>
+                <label for="value_soyeucau"class="col-sm-5 col-form-label">{{ so_yeu_cau }}</label>
                 <input type="hidden" name="so_yeu_cau" value="{{ so_yeu_cau }}">
 
               </div>
          
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Số rep</label>
-                <label for="value_sorep" class="col-sm-4 col-form-label">{{ so_rep }}</label>
+                <label class="col-sm-5 col-form-label">Số rep</label>
+                <label for="value_sorep" class="col-sm-5 col-form-label">{{ so_rep }}</label>
                 <input type="hidden" name="loai_s_chuan" value="{{ so_rep }}">
               </div>              
 
               <!-- Dropdown 3 -->
               <div class="form-group row">
-                <label for="exampleFormControlInput3" class="col-sm-4 col-form-label">Số lượng</label>
-                <label for="value_soluong" class="col-sm-4 col-form-label">{{ so_luong }}</label>
+                <label for="exampleFormControlInput3" class="col-sm-5 col-form-label">Số lượng</label>
+                <label for="value_soluong" class="col-sm-5 col-form-label">{{ so_luong }}</label>
                 <input type="hidden" name="so_luong" value="{{ so_luong }}">
               </div>              
 
@@ -42,16 +42,16 @@
 
               <!-- Radio Buttons -->
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
-                <label for="value_loaischuan" class="col-sm-4 col-form-label">{{ loai_s_chuan }}</label>
+                <label class="col-sm-5 col-form-label">Loại S chuẩn</label>
+                <label for="value_loaischuan" class="col-sm-5 col-form-label">{{ loai_s_chuan }}</label>
                 <input type="hidden" name="loai_s_chuan" value="{{ loai_s_chuan }}">
 
               </div>
               
               <!-- Dropdown 1 -->
               <div class="form-group row">
-                <label for="exampleFormControlInput1" class="col-sm-4 col-form-label">S no</label>
-                <label for="value_sno" class="col-sm-4 col-form-label">{{ s_no }}</label>
+                <label for="exampleFormControlInput1" class="col-sm-5 col-form-label">S no</label>
+                <label for="value_sno" class="col-sm-5 col-form-label">{{ s_no }}</label>
                 <input type="hidden" name="selected_order_sno" value="{{ s_no }}">
 
               </div>
@@ -76,8 +76,8 @@
 
 
               <div class="form-group row">
-                <label for="loaiBanVe" class="col-sm-4 col-form-label">Loại bản vẽ</label>
-                <div class="col-sm-8">
+                <label for="loaiBanVe" class="col-sm-5 col-form-label">Loại bản vẽ</label>
+                <div class="col-sm-7">
                     <select class="my-custom-select" id="loaiBanVe" name="loai_ban_ve">
                         <option value="" selected></option>
                         <option value="Chính thức">Bản vẽ chính thức</option>
@@ -87,8 +87,8 @@
             </div>
             
             <div class="form-group row">
-                <label for="kiemTra" class="col-sm-4 col-form-label">Kiểm tra</label>
-                <div class="col-sm-8">
+                <label for="kiemTra" class="col-sm-5 col-form-label">Kiểm tra</label>
+                <div class="col-sm-7">
                     <select class="my-custom-select" id="kiemTra" name="kiem_tra">
                         <option value="" selected></option>
                         <option value="Có">Có</option>
@@ -98,8 +98,8 @@
             </div>
             
             <div class="form-group row">
-                <label for="lamDen" class="col-sm-4 col-form-label">Làm đen</label>
-                <div class="col-sm-8">
+                <label for="lamDen" class="col-sm-5 col-form-label">Làm đen</label>
+                <div class="col-sm-7">
                     <select class="my-custom-select" id="lamDen" name="lam_den">
                         <option value="" selected></option>
                         <option value="Có">Có</option>
@@ -110,8 +110,8 @@
             
           
           <div class="form-group row">
-              <label for="thuongGap" class="col-sm-4 col-form-label">Bản vẽ</label>
-              <div class="col-sm-8">
+              <label for="thuongGap" class="col-sm-5 col-form-label">Bản vẽ</label>
+              <div class="col-sm-7">
                   <select class="my-custom-select" id="thuongGap" name="thuong_gap">
                       <option value="" selected></option>
                       <option value="Thường">Thường</option>
@@ -123,8 +123,8 @@
 
             <!-- Dropdown 4 -->
             <div class="form-group row">
-              <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">Vật liệu</label>
-              <label for="value_vatlieu" class="col-sm-4 col-form-label">{{ materials|default:""}}</label>
+              <label for="exampleFormControlSelect4" class="col-sm-5 col-form-label">Vật liệu</label>
+              <label for="value_vatlieu" class="col-sm-5 col-form-label">{{ materials|default:""}}</label>
               <input type="hidden" name="selected_material" value="{{ materials }}">
             
             </div>
@@ -134,8 +134,8 @@
 
             <!-- Dropdown 5 -->
             <div class="form-group row">
-              <label for="value_quycach1bit" class="col-sm-4 col-form-label" style="width: 120px;">Quy cách 1 pcs</label>
-              <label class="col-sm-4 col-form-label" style="width: 120px;">{{ specification|default:'' }}</label>
+              <label for="value_quycach1bit" class="col-sm-5 col-form-label" style="width: 120px;">Quy cách 1 pcs</label>
+              <label class="col-sm-5 col-form-label" style="width: 120px;">{{ specification|default:'' }}</label>
 
               <div class="col-sm-4">
                   <input type="hidden" type="text" class="form-control" id="value_quycach1bit" name="selected_specification" value="{{ specification|default:'' }}">
@@ -181,7 +181,7 @@
             </div>              
 
             <div class="form-group row">
-              <div class="col-sm-8">
+              <div class="col-sm-7">
                   <button type="submit" class="btn btn-primary">Lưu</button>
                   <!-- <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button> -->
 
@@ -192,7 +192,7 @@
         </div>
       </div>
 
-      <div class="col-md-7 grid-margin stretch-card">
+      <div class="col-md-8 grid-margin stretch-card">
         <iframe src="{% static drawing %}" width="100%" height="1120px" frameborder="0"></iframe>
      </div>      
 

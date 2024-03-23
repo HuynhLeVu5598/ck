@@ -11,42 +11,42 @@
 
 
       <!-- Cột chứa các dropdown -->
-      <div class="col-md-4 grid-margin stretch-card">
+      <div class="col-md-4 grid-margin stretch-card" style="overflow-y:scroll; max-height: 90vh;">
         <div class="card">
           <div class="card-body">
             <h3>Chi tiết Sno</h3>
 
             <div class="form-group row">
-              <label for="orderDropdown" class="col-sm-4 col-form-label">S no</label>
-              <label for="orderDropdown" class="col-sm-4 col-form-label">{{ order.sno }}</label>
+              <label for="orderDropdown" class="col-sm-5 col-form-label">S no</label>
+              <label for="orderDropdown" class="col-sm-5 col-form-label">{{ order.sno }}</label>
             </div>
 
             <div class="form-group row">
-              <label class="col-sm-4 col-form-label">Số yêu cầu</label>
-              <label class="col-sm-4 col-form-label">{{ order.request_number }}</label>
+              <label class="col-sm-5 col-form-label">Số yêu cầu</label>
+              <label class="col-sm-5 col-form-label">{{ order.request_number }}</label>
             </div>
 
             <div class="form-group row">
-              <label for="exampleFormControlSelect3" class="col-sm-4 col-form-label">Số lượng</label>
-              <label for="exampleFormControlSelect3" class="col-sm-4 col-form-label">{{ order.quantity|default:"" }}</label>
+              <label for="exampleFormControlSelect3" class="col-sm-5 col-form-label">Số lượng</label>
+              <label for="exampleFormControlSelect3" class="col-sm-5 col-form-label">{{ order.quantity|default:"" }}</label>
             </div>
 
             <!-- Radio Buttons -->
             <div class="form-group row">
-              <label class="col-sm-4 col-form-label">Loại S chuẩn</label>
-              <label class="col-sm-4 col-form-label">{{ order.type_s|default:""  }}</label>
+              <label class="col-sm-5 col-form-label">Loại S chuẩn</label>
+              <label class="col-sm-5 col-form-label">{{ order.type_s|default:""  }}</label>
             </div>
 
             <!-- Dropdown 4 -->
             <div class="form-group row">
-              <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">Vật liệu</label>
-              <label for="exampleFormControlSelect4" class="col-sm-4 col-form-label">{{ order.order_material.material.name|default:""}}</label>
+              <label for="exampleFormControlSelect4" class="col-sm-5 col-form-label">Vật liệu</label>
+              <label for="exampleFormControlSelect4" class="col-sm-5 col-form-label">{{ order.order_material.material.name|default:""}}</label>
             </div>
 
             <!-- Dropdown 5 -->
             <div class="form-group row">
-              <label for="exampleFormControlSelect5" class="col-sm-4 col-form-label" style="width: 120px;">Quy cách 1 pcs</label>
-              <label for="exampleFormControlSelect5" class="col-sm-4 col-form-label" style="width: 120px;">{{ order.specification|default:"" }}</label>
+              <label for="exampleFormControlSelect5" class="col-sm-5 col-form-label" style="width: 120px;">Quy cách 1 pcs</label>
+              <label for="exampleFormControlSelect5" class="col-sm-5 col-form-label" style="width: 120px;">{{ order.specification|default:"" }}</label>
             </div>
 
             <div class="form-group row">
